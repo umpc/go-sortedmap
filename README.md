@@ -64,7 +64,7 @@ func main() {
 	sm.BatchReplace(records...)
 
 	// Ordered iteration up until a given time:
-	for rec := range sm.IterBefore(time.Now()) {
+	for rec := range sm.IterUntil(time.Now()) {
 		fmt.Printf("%+v\n", rec)
 	}
 }
