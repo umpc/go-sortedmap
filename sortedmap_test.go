@@ -25,6 +25,16 @@ func TestInsert(t *testing.T) {
 	if err := verifyRecords(sm.Iter()); err != nil {
 		t.Fatal(err)
 	}
+
+	for i := range records {
+		if sm.Insert(records[i].Key, records[i].Val) {
+			t.Fatalf("Insert failed: %v", notFoundErr)
+		}
+	}
+
+	if err := verifyRecords(sm.Iter()); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestReplace(t *testing.T) {
@@ -48,7 +58,25 @@ func TestHas(t *testing.T) {
 	sm.BatchReplace(records...)
 
 	for i := range records {
-		sm.Has(records[i].Key)
+		if !sm.Has(records[i].Key) {
+			t.Fatalf("Has failed: %v", notFoundErr)
+		}
+	}
+
+	if err := verifyRecords(sm.Iter()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGet(t *testing.T) {
+	records := randRecords(3)
+	sm := New(nil)
+	sm.BatchReplace(records...)
+
+	for i := range records {
+		if val, ok := sm.Get(records[i].Key); val == nil || !ok {
+			t.Fatalf("Get failed: %v", notFoundErr)
+		}
 	}
 
 	if err := verifyRecords(sm.Iter()); err != nil {
