@@ -3,6 +3,8 @@ package sortedmap
 import (
 	"testing"
 	"time"
+
+	lt "github.com/umpc/go-sortedmap/asc"
 )
 
 const (
@@ -14,7 +16,7 @@ const (
 
 func TestInsert(t *testing.T) {
 	records := randRecords(3)
-	sm := New(nil)
+	sm := New(asc.Time)
 
 	for i := range records {
 		if !sm.Insert(records[i].Key, records[i].Val) {

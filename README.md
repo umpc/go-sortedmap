@@ -24,8 +24,8 @@ func main() {
 	records := randRecords(23)
 	
 	// Create a new collection and set its 'less than' conditional function:
-	sm := sortedmap.New(func(insertVal, idxVal interface{}) bool {
-		return insertVal.(time.Time).Before(idxVal.(time.Time))
+	sm := sortedmap.New(func(i, j interface{}) bool {
+		return i.(time.Time).Before(j.(time.Time))
 	})
 
 	sm.BatchInsert(records...)
