@@ -14,7 +14,7 @@ import (
 	"time"
 	mrand "math/rand"
 
-	"github.com/umpc/sortedmap"
+	"github.com/umpc/go-sortedmap"
 )
 
 func main() {
