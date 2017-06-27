@@ -24,8 +24,8 @@ func main() {
 	records := randRecords(23)
 	
 	// Create a new collection and set its 'less than' conditional function:
-	sm := sortedmap.New(func(idx map[string]interface{}, sorted []string, i int, val interface{}) bool {
-		return val.(time.Time).Before(idx[sorted[i]].(time.Time))
+	sm := sortedmap.New(func(insertVal, idxVal interface{}) bool {
+		return insertVal.(time.Time).Before(idxVal.(time.Time))
 	})
 
 	sm.BatchInsert(records...)
@@ -35,7 +35,7 @@ func main() {
 		fmt.Printf("%+v\n", rec)
 	}
 
-	// That's it for the basics! Check out the docs for further explainations and more functionality.
+	// Check out the docs for further explainations and more functionality.
 }
 
 func randRecords(n int) []*sortedmap.Record {

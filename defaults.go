@@ -2,8 +2,8 @@ package sortedmap
 
 import "time"
 
-func defaultSortLessFn(idx map[string]interface{}, sorted []string, i int, val interface{}) bool {
-	return val.(time.Time).Before(idx[sorted[i]].(time.Time))
+func defaultSortLessFn(insertVal, idxVal interface{}) bool {
+	return insertVal.(time.Time).Before(idxVal.(time.Time))
 }
 
 func setDefaults(lessFn SortLessFunc) SortLessFunc {

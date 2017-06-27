@@ -8,7 +8,7 @@ func (sm *SortedMap) insertSort(key string, val interface{}) []string {
 		return []string{key}
 	}
 	i := sort.Search(smLen, func(i int) bool {
-		return sm.lessFn(sm.idx, sm.sorted, i, val)
+		return sm.lessFn(val, sm.idx[sm.sorted[i]])
 	})
 	return insertString(sm.sorted, i, key)
 }

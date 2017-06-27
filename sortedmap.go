@@ -15,7 +15,7 @@ type Record struct {
 }
 
 // SortLessFunc defines the type of the 'less than' comparison function for the default or chosen type.
-type SortLessFunc func(idx map[string]interface{}, sorted []string, i int, val interface{}) bool
+type SortLessFunc func(insertVal, idxVal interface{}) bool
 
 // New creates and initializes a new SortedMap structure and returns a reference to it.
 func New(lessFn SortLessFunc) *SortedMap {
