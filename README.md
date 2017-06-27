@@ -21,9 +21,25 @@ import (
 
 func main() {
 	mrand.Seed(time.Now().UTC().UnixNano())
+	records := randRecords(23)
+	
+	// Create a new collection and set its 'less than' conditional function:
+	sm := sortedmap.New(func(idx map[string]interface{}, sorted []string, i int, val interface{}) bool {
+		return val.(time.Time).Before(idx[sorted[i]].(time.Time))
+	})
 
-	// Example records:
-	records := make([]*sortedmap.Record, 5)
+	sm.BatchInsert(records...)
+
+	// Provides ordered iteration until reaching the given value:
+	for rec := range sm.IterUntil(time.Now()) {
+		fmt.Printf("%+v\n", rec)
+	}
+
+	// That's it for the basics! Check out the docs for further explainations and more functionality.
+}
+
+func randRecords(n int) []*sortedmap.Record {
+	records := make([]*sortedmap.Record, n)
 	for i := range records {
 		year := mrand.Intn(2058)
 		for year < 2000 {
@@ -44,34 +60,11 @@ func main() {
 	
 		t := time.Date(year, mth, day, hour, min, sec, 0, time.UTC)
 		records[i] = &sortedmap.Record{
-			Key: t.Format(time.RFC3339),
-// 			Val: mrand.Intn(34334534561),
+			Key: t.Format(time.UnixDate),
 			Val: t,
 		}
 	}
-
-	// Only one type can be used at a time, though handling for multiple types is still shown here:
-	sm := sortedmap.New(func(idx map[string]interface{}, sorted []string, i int, val interface{}) bool {
-		switch val.(type) {
-//		case int:
-//			return val.(int) < idx[sorted[i]].(int)
-		case time.Time:
-			return val.(time.Time).Before(idx[sorted[i]].(time.Time))
-		default:
-			return false
-		}
-	})
-
-	// This instance is similar to the above declaration and contains the time.Time 'less than' conditional function shown above:
-	// sm := sortedmap.New(nil)
-
-	// Insert:
-	sm.BatchReplace(records...)
-
-	// Ordered iteration up until a given time:
-	for rec := range sm.IterUntil(time.Now()) {
-		fmt.Printf("%+v\n", rec)
-	}
+	return records
 }
 ```
 
