@@ -7,7 +7,7 @@ import (
 )
 
 func randStr(n int) string {
-    mrand.Seed(time.Now().UTC().UnixNano())
+	mrand.Seed(time.Now().UTC().UnixNano())
 
 	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~[]{}|:;<>,./?"
 	result := make([]byte, n)
