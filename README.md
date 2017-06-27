@@ -23,9 +23,9 @@ func main() {
 	// Example records:
 	records := make([]*sortedmap.Record, 5)
 	for i := range records {
-		year := mrand.Intn(2018)
-		if year < 1970 {
-			year = 1970
+		year := mrand.Intn(2058)
+		for year < 2000 {
+			year = mrand.Intn(2058)
 		}
 		mth := time.Month(mrand.Intn(12))
 		if mth < 1 {
