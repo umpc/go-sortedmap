@@ -29,7 +29,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestFalseLessFunc(t *testing.T) {
-	if New(nil).lessFn() {
+	if New(nil).lessFn(nil, nil) {
 		t.Fatal("TestFalseLessFunc failed: lessFn returned true!")
 	}
 }
