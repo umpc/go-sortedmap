@@ -8,13 +8,15 @@ func (sm *SortedMap) iter(bufSize int) <-chan Record {
 	go func(ch chan Record) {
 		var (
 			key string
-			smLen = len(sm.sorted)
+			idxSnapshot = sm.idx
+			sortedSnapshot = sm.sorted
+			smLen = len(sortedSnapshot)
 		)
 		for i := 0; i < smLen; i++ {
-			key = sm.sorted[i]
+			key = sortedSnapshot[i]
 			ch <- Record{
 				Key: key,
-				Val: sm.idx[key],
+				Val: idxSnapshot[key],
 			}
 		}
 		close(ch)
@@ -29,16 +31,18 @@ func (sm *SortedMap) iterUntil(bufSize int, val interface{}) <-chan Record {
 	go func(ch chan Record) {
 		var (
 			key string
-			smLen = len(sm.sorted)
+			idxSnapshot = sm.idx
+			sortedSnapshot = sm.sorted
+			smLen = len(sortedSnapshot)
 		)
 		for i := 0; i < smLen; i++ {
-			if sm.lessFn(sm.idx, sm.sorted, i, val) {
+			if sm.lessFn(idxSnapshot, sortedSnapshot, i, val) {
 				break
 			}
-			key = sm.sorted[i]
+			key = sortedSnapshot[i]
 			ch <- Record{
 				Key: key,
-				Val: sm.idx[key],
+				Val: idxSnapshot[key],
 			}
 		}
 		close(ch)
@@ -53,16 +57,18 @@ func (sm *SortedMap) iterAfter(bufSize int, val interface{}) <-chan Record {
 	go func(ch chan Record) {
 		var (
 			key string
-			smLen = len(sm.sorted)
+			idxSnapshot = sm.idx
+			sortedSnapshot = sm.sorted
+			smLen = len(sortedSnapshot)
 		)
 		i := sort.Search(smLen, func(i int) bool {
-			return sm.lessFn(sm.idx, sm.sorted, i, val)
+			return sm.lessFn(idxSnapshot, sortedSnapshot, i, val)
 		})
 		for; i < smLen; i++ {
-			key = sm.sorted[i]
+			key = sortedSnapshot[i]
 			ch <- Record{
 				Key: key,
-				Val: sm.idx[key],
+				Val: idxSnapshot[key],
 			}
 		}
 		close(ch)

@@ -21,11 +21,3 @@ func (sm *SortedMap) BatchReplace(recs ...*Record) {
 		sm.replace(rec.Key, rec.Val)
 	}
 }
-
-// ChReplace reads records from a channel and adds all given records to the collection.
-// Even if a key already exists, the value will be inserted. If a clearly efficient alternative to this function is proposed, it will likely be accepted and merged.
-func (sm *SortedMap) ChReplace(ch <-chan *Record) {
-	for rec := range ch {
-		sm.replace(rec.Key, rec.Val)
-	}
-}
