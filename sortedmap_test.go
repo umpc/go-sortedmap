@@ -14,6 +14,25 @@ const (
 	invalidDelete = "invalid delete status!"
 )
 
+func TestNew(t *testing.T) {
+	sm := New(nil)
+
+	if sm.idx == nil {
+		t.Fatal("TestNew failed: idx was nil!")
+	}
+	if sm.sorted == nil {
+		t.Fatal("TestNew failed: sorted was nil!")
+	}
+	if sm.lessFn == nil {
+		t.Fatal("TestNew failed: lessFn was nil!")
+	}
+}
+
+func TestFalseLessFunc(_ *testing.T) {
+	sm := New(nil)
+	sm.Insert("test", nil)
+}
+
 func TestInsert(t *testing.T) {
 	records := randRecords(3)
 	sm := New(asc.Time)
