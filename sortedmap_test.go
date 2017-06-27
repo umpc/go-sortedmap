@@ -28,9 +28,10 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestFalseLessFunc(_ *testing.T) {
-	sm := New(nil)
-	sm.Insert("test", nil)
+func TestFalseLessFunc(t *testing.T) {
+	if New(nil).lessFn() {
+		t.Fatal("TestFalseLessFunc failed: lessFn returned true!")
+	}
 }
 
 func TestInsert(t *testing.T) {
