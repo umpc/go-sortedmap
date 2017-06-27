@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 	mrand "math/rand"
+
+	"github.com/umpc/go-sortedmap/asc"
 )
 
 func randStr(n int) string {
@@ -66,7 +68,7 @@ func verifyRecords(ch <-chan Record) error {
 
 func newSortedMapFromRandRecords(n int) *SortedMap {
 	records := randRecords(n)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	return sm

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	lt "github.com/umpc/go-sortedmap/asc"
+	"github.com/umpc/go-sortedmap/asc"
 )
 
 const (
@@ -41,7 +41,7 @@ func TestInsert(t *testing.T) {
 
 func TestReplace(t *testing.T) {
 	records := randRecords(3)
-	sm := New(nil)
+	sm := New(asc.Time)
 
 	for i := 0; i < 5; i++ {
 		for ii := range records {
@@ -56,7 +56,7 @@ func TestReplace(t *testing.T) {
 
 func TestHas(t *testing.T) {
 	records := randRecords(3)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	for i := range records {
@@ -72,7 +72,7 @@ func TestHas(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	records := randRecords(3)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	for i := range records {
@@ -88,7 +88,7 @@ func TestGet(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	records := randRecords(300)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	if err := verifyRecords(sm.Iter()); err != nil {
@@ -123,7 +123,7 @@ func TestLen(t *testing.T) {
 
 func TestBatchInsert(t *testing.T) {
 	records := randRecords(1000)
-	sm := New(nil)
+	sm := New(asc.Time)
 
 	for _, ok := range sm.BatchInsert(records...) {
 		if !ok {
@@ -146,7 +146,7 @@ func TestBatchReplace(t *testing.T) {
 
 func TestBatchHas(t *testing.T) {
 	records := randRecords(1000)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	keys := make([]string, len(records))
@@ -167,7 +167,7 @@ func TestBatchHas(t *testing.T) {
 
 func TestBatchGet(t *testing.T) {
 	records := randRecords(1000)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	keys := make([]string, len(records))
@@ -189,7 +189,7 @@ func TestBatchGet(t *testing.T) {
 
 func TestBatchDelete(t *testing.T) {
 	records := randRecords(300)
-	sm := New(nil)
+	sm := New(asc.Time)
 	sm.BatchReplace(records...)
 
 	if err := verifyRecords(sm.Iter()); err != nil {
