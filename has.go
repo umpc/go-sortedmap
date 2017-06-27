@@ -6,7 +6,7 @@ func (sm *SortedMap) Has(key string) bool {
 	return ok
 }
 
-// Has checks if the keys exist in the collection and returns a slice containing the results.
+// BatchHas checks if the keys exist in the collection and returns a slice containing the results.
 func (sm *SortedMap) BatchHas(keys ...string) []bool {
 	results := make([]bool, len(keys))
 	for i, key := range keys {
