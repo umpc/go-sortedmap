@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	notFoundErr = "key not found"
+	notFoundErr = "key not found!"
 	keyExistsErr = "a key already exists in the collection!"
 	unsortedErr = "SortedMap is not sorted!"
 	invalidDelete = "invalid delete status!"
@@ -75,67 +75,57 @@ func TestReplace(t *testing.T) {
 }
 
 func TestHas(t *testing.T) {
-	records := randRecords(3)
-	sm := New(asc.Time)
-	sm.BatchReplace(records...)
-
+	sm, records, err := newSortedMapFromRandRecords(3)
+	if err != nil {
+		t.Fatal(err)
+	}
 	for i := range records {
 		if !sm.Has(records[i].Key) {
 			t.Fatalf("Has failed: %v", notFoundErr)
 		}
 	}
-
 	if err := verifyRecords(sm.Iter()); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestGet(t *testing.T) {
-	records := randRecords(3)
-	sm := New(asc.Time)
-	sm.BatchReplace(records...)
-
+	sm, records, err := newSortedMapFromRandRecords(3)
+	if err != nil {
+		t.Fatal(err)
+	}
 	for i := range records {
 		if val, ok := sm.Get(records[i].Key); val == nil || !ok {
 			t.Fatalf("Get failed: %v", notFoundErr)
 		}
 	}
-
 	if err := verifyRecords(sm.Iter()); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestDelete(t *testing.T) {
-	records := randRecords(300)
-	sm := New(asc.Time)
-	sm.BatchReplace(records...)
-
-	if err := verifyRecords(sm.Iter()); err != nil {
+	sm, records, err := newSortedMapFromRandRecords(300)
+	if err != nil {
 		t.Fatal(err)
 	}
-
 	if sm.Delete("") {
 		t.Fatalf("Delete: %v", invalidDelete)
 	}
-
 	for _, rec := range records {
 		sm.Delete(rec.Key)
 	}
-
 	if err := verifyRecords(sm.Iter()); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestLen(t *testing.T) {
-	count := 100
-	sm := newSortedMapFromRandRecords(count)
-
-	if err := verifyRecords(sm.Iter()); err != nil {
+	const count = 100
+	sm, _, err := newSortedMapFromRandRecords(count)
+	if err != nil {
 		t.Fatal(err)
 	}
-
 	if sm.Len() != count {
 		t.Fatalf("Len: invalid SortedMap length. Expected: %v, Had: %v.", count, sm.Len())
 	}
@@ -145,36 +135,34 @@ func TestBatchInsert(t *testing.T) {
 	records := randRecords(1000)
 	sm := New(asc.Time)
 
-	for _, ok := range sm.BatchInsert(records...) {
+	for _, ok := range sm.BatchInsert(records) {
 		if !ok {
 			t.Fatalf("BatchInsert failed: %v", keyExistsErr)
 		}
 	}
-
 	if err := verifyRecords(sm.Iter()); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBatchReplace(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if _, _, err := newSortedMapFromRandRecords(1000); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBatchHas(t *testing.T) {
-	records := randRecords(1000)
-	sm := New(asc.Time)
-	sm.BatchReplace(records...)
+	sm, records, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	keys := make([]string, len(records))
+	keys := make([]interface{}, len(records))
 	for i := range records {
 		keys[i] = records[i].Key
 	}
 
-	for _, ok := range sm.BatchHas(keys...) {
+	for _, ok := range sm.BatchHas(keys) {
 		if !ok {
 			t.Fatalf("BatchHas: %v", notFoundErr)
 		}
@@ -186,16 +174,17 @@ func TestBatchHas(t *testing.T) {
 }
 
 func TestBatchGet(t *testing.T) {
-	records := randRecords(1000)
-	sm := New(asc.Time)
-	sm.BatchReplace(records...)
+	sm, records, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	keys := make([]string, len(records))
+	keys := make([]interface{}, len(records))
 	for i := range records {
 		keys[i] = records[i].Key
 	}
 
-	values, results := sm.BatchGet(keys...)
+	values, results := sm.BatchGet(keys)
 	for i, ok := range results {
 		if values[i] == nil || !ok {
 			t.Fatalf("BatchGet: %v", notFoundErr)
@@ -208,15 +197,16 @@ func TestBatchGet(t *testing.T) {
 }
 
 func TestBatchDelete(t *testing.T) {
-	records := randRecords(300)
-	sm := New(asc.Time)
-	sm.BatchReplace(records...)
+	sm, records, err := newSortedMapFromRandRecords(300)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if err := verifyRecords(sm.Iter()); err != nil {
 		t.Fatal(err)
 	}
 
-	keys := make([]string, 0)
+	keys := make([]interface{}, 0)
 	for i, rec := range records {
 		if i == 50 {
 			break
@@ -224,7 +214,7 @@ func TestBatchDelete(t *testing.T) {
 		keys = append(keys, rec.Key)
 	}
 
-	for _, ok := range sm.BatchDelete(keys...) {
+	for _, ok := range sm.BatchDelete(keys) {
 		if !ok {
 			t.Fatalf("BatchDelete: %v", invalidDelete)
 		}
@@ -236,48 +226,56 @@ func TestBatchDelete(t *testing.T) {
 }
 
 func TestIter(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if _, _, err := newSortedMapFromRandRecords(1000); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestIterUntil(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := verifyRecords(sm.IterUntil(time.Now())); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestIterAfter(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := verifyRecords(sm.IterAfter(time.Now())); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBufferedIter(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := verifyRecords(sm.BufferedIter(256)); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBufferedIterUntil(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := verifyRecords(sm.BufferedIterUntil(256, time.Now())); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBufferedIterAfter(t *testing.T) {
-	sm := newSortedMapFromRandRecords(1000)
-
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := verifyRecords(sm.BufferedIterAfter(256, time.Now())); err != nil {
 		t.Fatal(err)
 	}

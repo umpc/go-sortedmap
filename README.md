@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/umpc/go-sortedmap.svg?branch=master)](https://travis-ci.org/umpc/go-sortedmap) [![Coverage Status](https://codecov.io/github/umpc/go-sortedmap/badge.svg?branch=master)](https://codecov.io/github/umpc/go-sortedmap?branch=master) [![GoDoc](https://godoc.org/github.com/umpc/go-sortedmap?status.svg)](https://godoc.org/github.com/umpc/go-sortedmap)
 
-Sorted Map is a small library that provides a value-sorted ```map[string]interface``` type and methods combined from Go 1 map and slice primitives.
+SortedMap is a small library that provides a value-sorted ```map[interface{}]interface{}``` type and methods combined from Go 1 map and slice primitives.
 
 This data structure allows for roughly constant-time reads and for efficiently iterating over only a subsection of the stored values. While this works for the project it was built for, because of the structure's reliance on a sorted slice of keys, worst-case delete operations are roughly ```O(n)```, where ```n``` is the number of items in the collection.
 

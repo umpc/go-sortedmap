@@ -52,7 +52,7 @@ func verifyRecords(ch <-chan Record) error {
 	previousRec := Record{}
 
 	for rec := range ch {
-		if previousRec.Key != "" {
+		if previousRec.Key != nil {
 			if previousRec.Val.(time.Time).After(rec.Val.(time.Time)) {
 				return fmt.Errorf("%v %v",
 					unsortedErr,
@@ -66,10 +66,14 @@ func verifyRecords(ch <-chan Record) error {
 	return nil
 }
 
-func newSortedMapFromRandRecords(n int) *SortedMap {
+func newSortedMapFromRandRecords(n int) (*SortedMap, []*Record, error) {
 	records := randRecords(n)
 	sm := New(asc.Time)
-	sm.BatchReplace(records...)
+	sm.BatchReplace(records)
 
-	return sm
+	if err := verifyRecords(sm.Iter()); err != nil {
+		return nil, nil, err
+	}
+
+	return sm, records, nil
 }

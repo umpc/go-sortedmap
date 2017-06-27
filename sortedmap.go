@@ -3,14 +3,14 @@ package sortedmap
 // SortedMap contains a map, slice, and reference to a sorting function.
 // SortedMap is not concurrency-safe, though it can be easily wrapped by a developer-defined type.
 type SortedMap struct {
-	idx    map[string]interface{}
-	sorted []string
+	idx    map[interface{}]interface{}
+	sorted []interface{}
 	lessFn SortLessFunc
 }
 
 // Record defines a type used in batching and iterations, where keys and values are used together.
 type Record struct {
-	Key string
+	Key,
 	Val interface{}
 }
 
@@ -25,8 +25,8 @@ func New(lessFn SortLessFunc) *SortedMap {
 		}
 	}
 	return &SortedMap{
-		idx:    make(map[string]interface{}),
-		sorted: make([]string, 0),
+		idx:    make(map[interface{}]interface{}),
+		sorted: make([]interface{}, 0),
 		lessFn: lessFn,
 	}
 }
