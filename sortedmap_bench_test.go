@@ -1,7 +1,6 @@
 package sortedmap
 
 import (
-	"fmt"
 	"testing"
 	"time"
 	mrand "math/rand"
@@ -19,40 +18,46 @@ func randStr(n int) string {
     return string(result)
 }
 
+func randRecord() Record {
+	year := mrand.Intn(2129)
+	if year < 1 {
+		year++
+	}
+	mth := time.Month(mrand.Intn(12))
+	if mth < 1 {
+		mth++
+	}
+	day := mrand.Intn(28)
+	if day < 1 {
+		day++
+	}
+	return Record{
+		Key: randStr(42),
+		Val: time.Date(year, mth, day, 0, 0, 0, 0, time.UTC),
+	}
+}
+
+func randRecords(n int) []*Record {
+	records := make([]*Record, n)
+	for i := range records {
+		rec := randRecord()
+		records[i] = &rec
+	}
+	return records
+}
+
 func BenchmarkNew(b *testing.B) {
 	var sm *SortedMap
 	if sm == nil {}
-	b.ResetTimer()
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		sm = New(nil)
 	}
 }
 
-func BenchmarkInsert(b *testing.B) {
-	sm := New(nil)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		testJWT := randStr(42)
-		testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
-		b.StartTimer()
-		sm.Insert(testJWT, testJWTExp)
-	}
-}
-
 func BenchmarkBatchInsert10Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
-
-	records := make([]*Record, 10)
-	for i := range records {
-		records[i] = &Record{
-			Key: randStr(42),
-			Val: testJWTExp,
-		}
-	}
-
+	records := randRecords(10)
 	sm := New(nil)
 
 	b.ResetTimer()
@@ -62,16 +67,7 @@ func BenchmarkBatchInsert10Records(b *testing.B) {
 }
 
 func BenchmarkBatchInsert100Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
-
-	records := make([]*Record, 100)
-	for i := range records {
-		records[i] = &Record{
-			Key: randStr(42),
-			Val: testJWTExp,
-		}
-	}
-
+	records := randRecords(100)
 	sm := New(nil)
 
 	b.ResetTimer()
@@ -81,16 +77,7 @@ func BenchmarkBatchInsert100Records(b *testing.B) {
 }
 
 func BenchmarkBatchInsert1000Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
-
-	records := make([]*Record, 1000)
-	for i := range records {
-		records[i] = &Record{
-			Key: randStr(42),
-			Val: testJWTExp,
-		}
-	}
-
+	records := randRecords(1000)
 	sm := New(nil)
 
 	b.ResetTimer()
@@ -100,40 +87,8 @@ func BenchmarkBatchInsert1000Records(b *testing.B) {
 }
 
 func BenchmarkBatchInsert10000Records(b *testing.B) {
-	mrand.Seed(time.Now().UTC().UnixNano())
-
-	records := make([]*Record, 10000)
-	for i := range records {
-		year := mrand.Intn(2129)
-		if year < 1 {
-			year++
-		}
-		mth := time.Month(mrand.Intn(12))
-		if mth < 1 {
-			mth++
-		}
-		day := mrand.Intn(28)
-		if day < 1 {
-			day++
-		}
-		t := time.Date(year, mth, day, 0, 0, 0, 0, time.UTC)
-		records[i] = &Record{
-			Key: t.Format(time.RFC3339),
-// 			Val: mrand.Intn(34334534561),
-			Val: t,
-		}
-	}
-
-	sm := New(func(idx map[string]interface{}, sorted []string, i int, val interface{}) bool {
-		switch val.(type) {
-		case int:
-			return val.(int) < idx[sorted[i]].(int)
-		case time.Time:
-			return val.(time.Time).Before(idx[sorted[i]].(time.Time))
-		default:
-			return false
-		}
-	})
+	records := randRecords(10000)
+	sm := New(nil)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -143,14 +98,9 @@ func BenchmarkBatchInsert10000Records(b *testing.B) {
 
 	// Verify
 	var previousRec Record
-	for rec := range sm.Iter(-1) {
+	for rec := range sm.Iter() {
 		if previousRec.Key != "" {
-			fmt.Println(previousRec.Val, rec.Val)
 			switch previousRec.Val.(type) {
-			case int:
-				if previousRec.Val.(int) > rec.Val.(int) {
-					panic("Sorted map is not sorted!")
-				}
 			case time.Time:
 				if previousRec.Val.(time.Time).After(rec.Val.(time.Time)) {
 					panic("Sorted map is not sorted!")
@@ -162,13 +112,13 @@ func BenchmarkBatchInsert10000Records(b *testing.B) {
 }
 
 func BenchmarkHas1000Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
+	testVal := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
 
 	records := make([]*Record, 1000)
 	for i := range records {
 		records[i] = &Record{
 			Key: randStr(42),
-			Val: testJWTExp,
+			Val: testVal,
 		}
 	}
 
@@ -182,13 +132,13 @@ func BenchmarkHas1000Records(b *testing.B) {
 }
 
 func BenchmarkHas10000Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
+	testVal := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
 
 	records := make([]*Record, 10000)
 	for i := range records {
 		records[i] = &Record{
 			Key: randStr(42),
-			Val: testJWTExp,
+			Val: testVal,
 		}
 	}
 
@@ -202,13 +152,13 @@ func BenchmarkHas10000Records(b *testing.B) {
 }
 
 func BenchmarkDelete1Of1000Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
+	testVal := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
 
 	records := make([]*Record, 1000)
 	for i := range records {
 		records[i] = &Record{
 			Key: randStr(42),
-			Val: testJWTExp,
+			Val: testVal,
 		}
 	}
 
@@ -225,13 +175,13 @@ func BenchmarkDelete1Of1000Records(b *testing.B) {
 }
 
 func BenchmarkDelete1Of10000Records(b *testing.B) {
-	testJWTExp := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
+	testVal := time.Date(2017, 06, 25, 0, 0, 0, 0, time.UTC)
 
 	records := make([]*Record, 10000)
 	for i := range records {
 		records[i] = &Record{
 			Key: randStr(42),
-			Val: testJWTExp,
+			Val: testVal,
 		}
 	}
 

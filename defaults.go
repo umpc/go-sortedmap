@@ -3,7 +3,7 @@ package sortedmap
 import "time"
 
 func defaultSortLessFn(idx map[string]interface{}, sorted []string, i int, val interface{}) bool {
-	return idx[sorted[i]].(time.Time).Before(val.(time.Time))
+	return val.(time.Time).Before(idx[sorted[i]].(time.Time))
 }
 
 func setDefaults(lessFn SortLessFunc) SortLessFunc {
