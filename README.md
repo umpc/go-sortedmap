@@ -12,58 +12,56 @@ This data structure allows for roughly constant-time reads and for efficiently i
 package main
 
 import (
-	"fmt"
-	"time"
-	mrand "math/rand"
+  "fmt"
+  "time"
+  mrand "math/rand"
 
-	"github.com/umpc/go-sortedmap"
-	"github.com/umpc/go-sortedmap/asc"
+  "github.com/umpc/go-sortedmap"
+  "github.com/umpc/go-sortedmap/asc"
 )
 
 func main() {
-	mrand.Seed(time.Now().UTC().UnixNano())
-	records := randRecords(23)
-	
-	// Create a new collection and set its 'less than' conditional function:
-	sm := sortedmap.New(asc.Time)
+  records := randRecords(23)
 
-	sm.BatchInsert(records...)
+  // Create a new collection and set its insertion sort order:
+  sm := sortedmap.New(asc.Time)
+  sm.BatchInsert(records)
 
-	// Provides ordered iteration until reaching the given value:
-	for rec := range sm.IterUntil(time.Now()) {
-		fmt.Printf("%+v\n", rec)
-	}
+  // Loop through records, in order, until reaching the given value:
+  for rec := range sm.IterUntil(time.Now()) {
+    fmt.Printf("%+v\n", rec)
+  }
 
-	// Check out the docs for further explainations and more functionality.
+  // Check out the docs for more functionality and further explainations.
 }
 
 func randRecords(n int) []*sortedmap.Record {
-	records := make([]*sortedmap.Record, n)
-	for i := range records {
-		year := mrand.Intn(2058)
-		for year < 2000 {
-			year = mrand.Intn(2058)
-		}
-		mth := time.Month(mrand.Intn(12))
-		if mth < 1 {
-			mth++
-		}
-		day := mrand.Intn(28)
-		if day < 1 {
-			day++
-		}
+  mrand.Seed(time.Now().UTC().UnixNano())
+  records := make([]*sortedmap.Record, n)
+  for i := range records {
+    year := mrand.Intn(2058)
+    for year < 2000 {
+      year = mrand.Intn(2058)
+    }
+    mth := time.Month(mrand.Intn(12))
+    if mth < 1 {
+      mth++
+    }
+    day := mrand.Intn(28)
+    if day < 1 {
+      day++
+    }
+    hour := mrand.Intn(23)
+    min  := mrand.Intn(59)
+    sec  := mrand.Intn(59)
 
-		hour := mrand.Intn(23)
-		min := mrand.Intn(59)
-		sec := mrand.Intn(59)
-	
-		t := time.Date(year, mth, day, hour, min, sec, 0, time.UTC)
-		records[i] = &sortedmap.Record{
-			Key: t.Format(time.UnixDate),
-			Val: t,
-		}
-	}
-	return records
+    t := time.Date(year, mth, day, hour, min, sec, 0, time.UTC)
+    records[i] = &sortedmap.Record{
+      Key: t.Format(time.UnixDate),
+      Val: t,
+    }
+  }
+  return records
 }
 ```
 
