@@ -17,6 +17,7 @@ import (
 	mrand "math/rand"
 
 	"github.com/umpc/go-sortedmap"
+	"github.com/umpc/go-sortedmap/asc"
 )
 
 func main() {
@@ -24,9 +25,7 @@ func main() {
 	records := randRecords(23)
 	
 	// Create a new collection and set its 'less than' conditional function:
-	sm := sortedmap.New(func(i, j interface{}) bool {
-		return i.(time.Time).Before(j.(time.Time))
-	})
+	sm := sortedmap.New(asc.Time)
 
 	sm.BatchInsert(records...)
 
