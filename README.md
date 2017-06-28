@@ -6,7 +6,7 @@ SortedMap is a small library that provides a value-sorted ```map[interface{}]int
 
 This data structure allows for roughly constant-time reads and for efficiently iterating over only a section of stored values.
 
-### Worst-Case Complexity
+### Complexity
 Operation | Worst-Case
 ----------|-----------
 Has | ```O(1)```
