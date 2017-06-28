@@ -4,9 +4,9 @@ func (sm *SortedMap) insert(key, val interface{}) bool {
 	if _, ok := sm.idx[key]; !ok {
 		sm.idx[key] = val
 		sm.sorted = sm.insertSort(key, val)
-	    return true
-    }
-    return false
+		return true
+	}
+	return false
 }
 
 // Insert uses the provided 'less than' function to insert sort and add the value to the collection and returns a value containing the record's insert status.
