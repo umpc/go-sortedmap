@@ -113,6 +113,7 @@ BenchmarkBatchInsert1000Records-8            	    2000	   1016292 ns/op	  202005
 BenchmarkBatchInsert10000Records-8           	      50	  23785169 ns/op	 2120592 B/op	     580 allocs/op
 
 BenchmarkReplace1of1Records-8                	 3000000	       514 ns/op	       0 B/op	       0 allocs/op
+
 BenchmarkReplace1of10Records-8               	 1000000	      1322 ns/op	       0 B/op	       0 allocs/op
 BenchmarkReplace1of100Records-8              	 1000000	      2313 ns/op	       0 B/op	       0 allocs/op
 BenchmarkReplace1of1000Records-8             	  500000	      3880 ns/op	       0 B/op	       0 allocs/op
