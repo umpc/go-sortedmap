@@ -13,7 +13,7 @@ func TestDelete(t *testing.T) {
 	for _, rec := range records {
 		sm.Delete(rec.Key)
 	}
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -24,7 +24,7 @@ func TestBatchDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 
@@ -42,7 +42,7 @@ func TestBatchDelete(t *testing.T) {
 		}
 	}
 
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }

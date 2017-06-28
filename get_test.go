@@ -12,7 +12,7 @@ func TestGet(t *testing.T) {
 			t.Fatalf("TestGet failed: %v", notFoundErr)
 		}
 	}
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -35,7 +35,7 @@ func TestBatchGet(t *testing.T) {
 		}
 	}
 
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }

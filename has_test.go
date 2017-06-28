@@ -12,7 +12,7 @@ func TestHas(t *testing.T) {
 			t.Fatalf("TestHas failed: %v", notFoundErr)
 		}
 	}
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -34,7 +34,7 @@ func TestBatchHas(t *testing.T) {
 		}
 	}
 
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }

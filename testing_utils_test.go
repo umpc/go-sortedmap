@@ -48,16 +48,26 @@ func randRecords(n int) []*Record {
 	return records
 }
 
-func verifyRecords(ch <-chan Record) error {
+func verifyRecords(ch <-chan Record, reverse bool) error {
 	previousRec := Record{}
 
 	for rec := range ch {
 		if previousRec.Key != nil {
-			if previousRec.Val.(time.Time).After(rec.Val.(time.Time)) {
-				return fmt.Errorf("%v %v",
-					unsortedErr,
-					fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
-				)
+			switch reverse {
+			case false:
+				if previousRec.Val.(time.Time).After(rec.Val.(time.Time)) {
+					return fmt.Errorf("%v %v",
+						unsortedErr,
+						fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
+					)
+				}
+			case true:
+				if previousRec.Val.(time.Time).Before(rec.Val.(time.Time)) {
+					return fmt.Errorf("%v %v",
+						unsortedErr,
+						fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
+					)
+				}
 			}
 		}
 		previousRec = rec
@@ -71,9 +81,21 @@ func newSortedMapFromRandRecords(n int) (*SortedMap, []*Record, error) {
 	sm := New(asc.Time)
 	sm.BatchReplace(records)
 
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		return nil, nil, err
 	}
 
 	return sm, records, nil
+}
+
+func newRandSortedMapWithKeys(n int) (*SortedMap, []*Record, []interface{}, error) {
+	sm, records, err := newSortedMapFromRandRecords(n)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	keys := make([]interface{}, n)
+	for n, rec := range records {
+		keys[n] = rec.Key
+	}
+	return sm, records, keys, err
 }

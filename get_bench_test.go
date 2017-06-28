@@ -2,62 +2,60 @@ package sortedmap
 
 import "testing"
 
-func BenchmarkGet1of1Record(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(1)
+func get1ofNRecords(b *testing.B, n int) {
+	sm, _, keys, err := newRandSortedMapWithKeys(n)
 	if err != nil {
 		b.Fatal(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sm.Get(records[0].Key)
+		sm.Get(keys[0])
+
+		b.StopTimer()
+		sm, _, keys, err = newRandSortedMapWithKeys(n)
+		if err != nil {
+			b.Fatal(err)
+		}
+		b.StartTimer()
 	}
 }
 
-func BenchmarkGet1of10Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(10)
+func batchGetNofNRecords(b *testing.B, n int) {
+	sm, _, keys, err := newRandSortedMapWithKeys(n)
 	if err != nil {
 		b.Fatal(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sm.Get(records[0].Key)
+		sm.BatchGet(keys)
+
+		b.StopTimer()
+		sm, _, keys, err = newRandSortedMapWithKeys(n)
+		if err != nil {
+			b.Fatal(err)
+		}
+		b.StartTimer()
 	}
 }
 
-func BenchmarkGet1of100Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(100)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.Get(records[0].Key)
-	}
+func BenchmarkGet1of1Records(b *testing.B) {
+	get1ofNRecords(b, 1)
 }
 
-func BenchmarkGet1of1000Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(1000)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.Get(records[0].Key)
-	}
+func BenchmarkBatchGet10of10Records(b *testing.B) {
+	batchGetNofNRecords(b, 10)
 }
 
-func BenchmarkGet1of10000Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(10000)
-	if err != nil {
-		b.Fatal(err)
-	}
+func BenchmarkBatchGet100of100Records(b *testing.B) {
+	batchGetNofNRecords(b, 100)
+}
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.Has(records[0].Key)
-	}
+func BenchmarkBatchGet1000of1000Records(b *testing.B) {
+	batchGetNofNRecords(b, 1000)
+}
+
+func BenchmarkBatchGet10000of10000Records(b *testing.B) {
+	batchGetNofNRecords(b, 10000)
 }

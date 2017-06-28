@@ -2,62 +2,60 @@ package sortedmap
 
 import "testing"
 
-func BenchmarkHas1of1Record(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(1)
+func has1ofNRecords(b *testing.B, n int) {
+	sm, _, keys, err := newRandSortedMapWithKeys(n)
 	if err != nil {
 		b.Fatal(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sm.Has(records[0].Key)
+		sm.Has(keys[0])
+
+		b.StopTimer()
+		sm, _, keys, err = newRandSortedMapWithKeys(n)
+		if err != nil {
+			b.Fatal(err)
+		}
+		b.StartTimer()
 	}
 }
 
-func BenchmarkHas1of10Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(10)
+func batchHasNofNRecords(b *testing.B, n int) {
+	sm, _, keys, err := newRandSortedMapWithKeys(n)
 	if err != nil {
 		b.Fatal(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sm.Has(records[0].Key)
+		sm.BatchHas(keys)
+
+		b.StopTimer()
+		sm, _, keys, err = newRandSortedMapWithKeys(n)
+		if err != nil {
+			b.Fatal(err)
+		}
+		b.StartTimer()
 	}
 }
 
-func BenchmarkHas1of100Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(100)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.Has(records[0].Key)
-	}
+func BenchmarkHas1of1Records(b *testing.B) {
+	has1ofNRecords(b, 1)
 }
 
-func BenchmarkHas1of1000Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(1000)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.Has(records[0].Key)
-	}
+func BenchmarkBatchHas10of10Records(b *testing.B) {
+	batchHasNofNRecords(b, 10)
 }
 
-func BenchmarkHas1of10000Records(b *testing.B) {
-	sm, records, err := newSortedMapFromRandRecords(10000)
-	if err != nil {
-		b.Fatal(err)
-	}
+func BenchmarkBatchHas100of100Records(b *testing.B) {
+	batchHasNofNRecords(b, 100)
+}
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.Has(records[0].Key)
-	}
+func BenchmarkBatchHas1000of1000Records(b *testing.B) {
+	batchHasNofNRecords(b, 1000)
+}
+
+func BenchmarkBatchHas10000of10000Records(b *testing.B) {
+	batchHasNofNRecords(b, 10000)
 }

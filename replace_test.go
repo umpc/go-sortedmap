@@ -11,12 +11,12 @@ func TestReplace(t *testing.T) {
 	sm := New(asc.Time)
 
 	for i := 0; i < 5; i++ {
-		for ii := range records {
-			sm.Replace(records[ii].Key, records[ii].Val)
+		for _, rec := range records {
+			sm.Replace(rec.Key, rec.Val)
 		}
 	}
 
-	if err := verifyRecords(sm.Iter()); err != nil {
+	if err := verifyRecords(sm.Iter(), false); err != nil {
 		t.Fatal(err)
 	}
 }

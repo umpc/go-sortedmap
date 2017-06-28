@@ -6,52 +6,52 @@ import (
 	"github.com/umpc/go-sortedmap/asc"
 )
 
-func BenchmarkBatchInsert1Record(b *testing.B) {
+func insertRecord(b *testing.B) {
 	records := randRecords(1)
 	sm := New(asc.Time)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sm.BatchInsert(records)
+		sm.Insert(records[0].Key, records[0].Val)
+
+		b.StopTimer()
+		records = randRecords(1)
+		sm = New(asc.Time)
+		b.StartTimer()
 	}
+}
+
+func batchInsertRecords(b *testing.B, n int) {
+	records := randRecords(n)
+	sm := New(asc.Time)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sm.BatchInsert(records)
+
+		b.StopTimer()
+		records = randRecords(n)
+		sm = New(asc.Time)
+		b.StartTimer()
+	}
+}
+
+func BenchmarkInsert1Record(b *testing.B) {
+	insertRecord(b)
 }
 
 func BenchmarkBatchInsert10Records(b *testing.B) {
-	records := randRecords(10)
-	sm := New(asc.Time)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.BatchInsert(records)
-	}
+	batchInsertRecords(b, 10)
 }
 
 func BenchmarkBatchInsert100Records(b *testing.B) {
-	records := randRecords(100)
-	sm := New(asc.Time)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.BatchInsert(records)
-	}
+	batchInsertRecords(b, 100)
 }
 
 func BenchmarkBatchInsert1000Records(b *testing.B) {
-	records := randRecords(1000)
-	sm := New(asc.Time)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.BatchInsert(records)
-	}
+	batchInsertRecords(b, 1000)
 }
 
 func BenchmarkBatchInsert10000Records(b *testing.B) {
-	records := randRecords(10000)
-	sm := New(asc.Time)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sm.BatchInsert(records)
-	}
+	batchInsertRecords(b, 10000)
 }
