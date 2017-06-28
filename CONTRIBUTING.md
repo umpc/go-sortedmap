@@ -6,11 +6,11 @@ Feel free to submit an issue or pull request. Each change will be considered bas
 
 When creating an issue, please be sure to include the following to ensure that your question can be answered:
 
-* A detailed description of the issue or question
+* A detailed description of the issue or question.
 * Steps taken to try and solve the issue or answer the question independently. If you are unsure of any steps to attempt, please say so.
-* The version of Go being used
-* The ```go-sortedmap``` commit ID of the code being used
-* A complete, working, snippet of code that demonstrates the issue being brought up
+* The version of Go being used.
+* The ```go-sortedmap``` commit ID of the code being used.
+* A complete, working, snippet of code that demonstrates the issue being brought up.
 
 ## Pull Requests
 
