@@ -61,17 +61,17 @@ func BenchmarkReplace1of10000Records(b *testing.B) {
 }
 
 func BenchmarkBatchReplace10of10Records(b *testing.B) {
-	batchDeleteNofNRecords(b, 10)
+	batchReplaceNofNRecords(b, 10)
 }
 
 func BenchmarkBatchReplace100of100Records(b *testing.B) {
-	batchDeleteNofNRecords(b, 100)
+	batchReplaceNofNRecords(b, 100)
 }
 
 func BenchmarkBatchReplace1000of1000Records(b *testing.B) {
-	batchDeleteNofNRecords(b, 1000)
+	batchReplaceNofNRecords(b, 1000)
 }
 
 func BenchmarkBatchReplace10000of10000Records(b *testing.B) {
-	batchDeleteNofNRecords(b, 10000)
+	batchReplaceNofNRecords(b, 10000)
 }
