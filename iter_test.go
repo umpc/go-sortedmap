@@ -46,7 +46,8 @@ func TestReverseIterUntil(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := verifyRecords(sm.ReverseIterUntil(time.Now()), true); err != nil {
+	t := time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC)
+	if err := verifyRecords(sm.ReverseIterUntil(t), true); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -106,7 +107,8 @@ func TestBufferedReverseIterUntil(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := verifyRecords(sm.BufferedReverseIterUntil(256, time.Now()), true); err != nil {
+	t := time.Date(2001, 1, 1, 0, 0, 0, 0, time.UTC)
+	if err := verifyRecords(sm.BufferedReverseIterUntil(256, t), true); err != nil {
 		t.Fatal(err)
 	}
 }
