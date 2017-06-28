@@ -9,7 +9,10 @@ When creating an issue, please be sure to include the following to ensure that y
 * A detailed description of the issue or question.
 * Steps taken to try and solve the issue or answer the question independently. If you are unsure of any steps to attempt, please say so.
 * The version of Go being used.
-* The commit ID of the code being used: ```git -C $GOPATH/src/github.com/umpc/go-sortedmap rev-parse --short HEAD```
+* The commit ID of the code being used:
+```sh
+git -C $GOPATH/src/github.com/umpc/go-sortedmap rev-parse --short HEAD
+```
 * A working snippet of code that demonstrates the issue being brought up.
 
 ## Pull Requests
