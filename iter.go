@@ -95,7 +95,7 @@ func (sm *SortedMap) reverseIterUntil(bufSize int, val interface{}) <-chan Recor
 			}
 			rec.Val = sm.idx[rec.Key]
 
-			if sm.lessFn(val, rec.Val) {
+			if !sm.lessFn(val, rec.Val) {
 				break
 			}
 			ch <- rec
