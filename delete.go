@@ -1,18 +1,26 @@
 package sortedmap
 
+import "sort"
+
 func (sm *SortedMap) delete(key interface{}) bool {
-	if _, ok := sm.idx[key]; ok {
-		delete(sm.idx, key)
-
+	if val, ok := sm.idx[key]; ok {
 		smLen := len(sm.sorted)
-		deleted := 0
 
-		for i := 0; i < smLen - deleted; i++ {
-			if sm.sorted[i] == key {
-				sm.sorted = deleteInterface(sm.sorted, i)
-				deleted++
-			}
+		i := sort.Search(smLen, func(i int) bool {
+			return sm.lessFn(val, sm.idx[sm.sorted[i]])
+		})
+
+		if i == smLen {
+			i--
+		} else if i < smLen - 1 {
+			i++
 		}
+		for sm.sorted[i] != key {
+			i--
+		}
+
+		delete(sm.idx, key)
+		sm.sorted = deleteInterface(sm.sorted, i)
 
 		return true
 	}

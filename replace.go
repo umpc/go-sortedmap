@@ -1,11 +1,8 @@
 package sortedmap
 
 func (sm *SortedMap) replace(key, val interface{}) {
-	if _, ok := sm.idx[key]; ok {
-	    sm.delete(key)
-    }
-	sm.idx[key] = val
-	sm.sorted = sm.insertSort(key, val)
+	sm.delete(key)
+	sm.insert(key, val)
 }
 
 // Replace uses the provided 'less than' function to insert sort.
