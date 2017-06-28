@@ -1,6 +1,6 @@
 package sortedmap
 
-// SortedMap contains a map, slice, and reference to a sorting function.
+// SortedMap contains a map, a slice, and a reference to a sorting function.
 // SortedMap is not concurrency-safe, though it can be easily wrapped by a developer-defined type.
 type SortedMap struct {
 	idx    map[interface{}]interface{}
@@ -14,7 +14,7 @@ type Record struct {
 	Val interface{}
 }
 
-// SortLessFunc defines the type of the 'less than' comparison function for the default or chosen type.
+// SortLessFunc defines the type of the comparison function for the chosen value type.
 type SortLessFunc func(i, j interface{}) bool
 
 // New creates and initializes a new SortedMap structure and returns a reference to it.
