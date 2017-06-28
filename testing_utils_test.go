@@ -8,9 +8,11 @@ import (
 	"github.com/umpc/go-sortedmap/asc"
 )
 
-func randStr(n int) string {
-	mrand.Seed(time.Now().UTC().UnixNano())
+func init() {
+	mrand.Seed(time.Now().UnixNano())
+}
 
+func randStr(n int) string {
 	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~[]{}|:;<>,./?"
 	result := make([]byte, n)
 

@@ -79,40 +79,56 @@ func randRecords(n int) []*sortedmap.Record {
 ## Benchmarks
 
 ```sh
-BenchmarkDelete1of1Record-8                  	 5000000	       386 ns/o       0 B/op	       0 allocs/op
-BenchmarkDelete1of10Records-8                	 3000000	       508 ns/o       0 B/op	       0 allocs/op
-BenchmarkDelete1of100Records-8               	 2000000	       893 ns/o       0 B/op	       0 allocs/op
-BenchmarkDelete1of1000Records-8              	 1000000	      1975 ns/o       0 B/op	       0 allocs/op
-BenchmarkDelete1of10000Records-8             	  500000	      3168 ns/o       0 B/op	       0 allocs/op
+BenchmarkDelete1of1Records-8                 	 5000000	       380 ns/op	       0 B/op	       0 allocs/op
 
-BenchmarkGet1of1Record-8                     	50000000	        33.2 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet1of10Records-8                   	50000000	        29.7 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet1of100Records-8                  	50000000	        30.8 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet1of1000Records-8                 	50000000	        32.9 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet1of10000Records-8                	50000000	        33.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDelete1of10Records-8                	 2000000	       834 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDelete1of100Records-8               	 1000000	      1443 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDelete1of1000Records-8              	  500000	      2400 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDelete1of10000Records-8             	  200000	      7318 ns/op	       0 B/op	       0 allocs/op
 
-BenchmarkHas1of1Record-8                     	50000000	        34.7 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas1of10Records-8                   	50000000	        32.0 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas1of100Records-8                  	50000000	        32.9 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas1of1000Records-8                 	50000000	        31.1 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas1of10000Records-8                	50000000	        33.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBatchDelete10of10Records-8          	  300000	      4198 ns/op	      16 B/op	       1 allocs/op
+BenchmarkBatchDelete100of100Records-8        	   30000	     56898 ns/op	     112 B/op	       1 allocs/op
+BenchmarkBatchDelete1000of1000Records-8      	    2000	    860714 ns/op	    1024 B/op	       1 allocs/op
+BenchmarkBatchDelete10000of10000Records-8    	      50	  20510810 ns/op	   10240 B/op	       1 allocs/op
 
-BenchmarkBatchInsert1Record-8                	20000000	        56.1 ns/op	       1 B/op	       1 allocs/op
-BenchmarkBatchInsert10Records-8              	 3000000	       397 ns/o      16 B/op	       1 allocs/op
-BenchmarkBatchInsert100Records-8             	  300000	      4572 ns/o     112 B/op	       1 allocs/op
-BenchmarkBatchInsert1000Records-8            	   30000	     55933 ns/o    1030 B/op	       1 allocs/op
-BenchmarkBatchInsert10000Records-8           	    2000	    677099 ns/o   11293 B/op	       1 allocs/op
+BenchmarkGet1of1Records-8                    	10000000	       122 ns/op	       0 B/op	       0 allocs/op
 
-BenchmarkBatchReplace1of1Record-8            	10000000	       205 ns/o       0 B/op	       0 allocs/op
-BenchmarkBatchReplace10of10Records-8         	  300000	      5457 ns/o       0 B/op	       0 allocs/op
-BenchmarkBatchReplace100of100Records-8       	   10000	    107118 ns/o       0 B/op	       0 allocs/op
-BenchmarkBatchReplace1000of1000Records-8     	    1000	   1982158 ns/o       0 B/op	       0 allocs/op
-BenchmarkBatchReplace10000of10000Records-8   	      20	  68456103 ns/o       0 B/op	       0 allocs/op
+BenchmarkBatchGet10of10Records-8             	 1000000	      1177 ns/op	     176 B/op	       2 allocs/op
+BenchmarkBatchGet100of100Records-8           	  200000	      7037 ns/op	    1904 B/op	       2 allocs/op
+BenchmarkBatchGet1000of1000Records-8         	   30000	     59494 ns/op	   17408 B/op	       2 allocs/op
+BenchmarkBatchGet10000of10000Records-8       	    2000	    848944 ns/op	  174080 B/op	       2 allocs/op
 
-BenchmarkNew-8                               	10000000	       119 ns/o      96 B/op	       2 allocs/op
+BenchmarkHas1of1Records-8                    	10000000	       123 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkBatchHas10of10Records-8             	 2000000	       923 ns/op	      16 B/op	       1 allocs/op
+BenchmarkBatchHas100of100Records-8           	  200000	      6347 ns/op	     112 B/op	       1 allocs/op
+BenchmarkBatchHas1000of1000Records-8         	   30000	     54532 ns/op	    1024 B/op	       1 allocs/op
+BenchmarkBatchHas10000of10000Records-8       	    2000	    630893 ns/op	   10240 B/op	       1 allocs/op
+
+BenchmarkInsert1Record-8                     	 2000000	       598 ns/op	     304 B/op	       2 allocs/op
+
+BenchmarkBatchInsert10Records-8              	  300000	      5030 ns/op	    1382 B/op	       8 allocs/op
+BenchmarkBatchInsert100Records-8             	   20000	     64203 ns/op	   14908 B/op	      19 allocs/op
+BenchmarkBatchInsert1000Records-8            	    2000	   1016292 ns/op	  202005 B/op	      78 allocs/op
+BenchmarkBatchInsert10000Records-8           	      50	  23785169 ns/op	 2120592 B/op	     580 allocs/op
+
+BenchmarkReplace1of1Records-8                	 3000000	       514 ns/op	       0 B/op	       0 allocs/op
+BenchmarkReplace1of10Records-8               	 1000000	      1322 ns/op	       0 B/op	       0 allocs/op
+BenchmarkReplace1of100Records-8              	 1000000	      2313 ns/op	       0 B/op	       0 allocs/op
+BenchmarkReplace1of1000Records-8             	  500000	      3880 ns/op	       0 B/op	       0 allocs/op
+BenchmarkReplace1of10000Records-8            	  200000	     10817 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkBatchReplace10of10Records-8         	  300000	      4212 ns/op	      16 B/op	       1 allocs/op
+BenchmarkBatchReplace100of100Records-8       	   20000	     59998 ns/op	     112 B/op	       1 allocs/op
+BenchmarkBatchReplace1000of1000Records-8     	    2000	    858613 ns/op	    1024 B/op	       1 allocs/op
+BenchmarkBatchReplace10000of10000Records-8   	     100	  20771583 ns/op	   10240 B/op	       1 allocs/op
+
+BenchmarkNew-8                               	10000000	       124 ns/op	      96 B/op	       2 allocs/op
 ```
 
-The above benchmarks were ran on a 2.6GHz Intel Core i7-6700HQ (Skylake) CPU.
+Better performance than the displayed benchmark test results is possible. The benchmark tests include some overhead from benchmark test functions that have been abstracted for easier comprehension and maintenance.
+
+The above benchmark tests were ran on a 2.6GHz Intel Core i7-6700HQ (Skylake) CPU.
 
 ## License
 
