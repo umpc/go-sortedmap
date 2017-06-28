@@ -112,7 +112,7 @@ BenchmarkBatchReplace10000of10000Records-8   	      20	  68456103 ns/o       0 B
 BenchmarkNew-8                               	10000000	       119 ns/o      96 B/op	       2 allocs/op
 ```
 
-The above benchmark was ran on a 2.6GHz Intel Core i7-6700HQ (Skylake) CPU.
+The above benchmarks were ran on a 2.6GHz Intel Core i7-6700HQ (Skylake) CPU.
 
 ## License
 
