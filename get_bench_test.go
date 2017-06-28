@@ -2,7 +2,7 @@ package sortedmap
 
 import "testing"
 
-func BenchmarkGet1Record(b *testing.B) {
+func BenchmarkGet1of1Record(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(1)
 	if err != nil {
 		b.Fatal(err)
@@ -14,7 +14,7 @@ func BenchmarkGet1Record(b *testing.B) {
 	}
 }
 
-func BenchmarkGet10Records(b *testing.B) {
+func BenchmarkGet1of10Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(10)
 	if err != nil {
 		b.Fatal(err)
@@ -26,7 +26,7 @@ func BenchmarkGet10Records(b *testing.B) {
 	}
 }
 
-func BenchmarkGet100Records(b *testing.B) {
+func BenchmarkGet1of100Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(100)
 	if err != nil {
 		b.Fatal(err)
@@ -38,7 +38,7 @@ func BenchmarkGet100Records(b *testing.B) {
 	}
 }
 
-func BenchmarkGet1000Records(b *testing.B) {
+func BenchmarkGet1of1000Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		b.Fatal(err)
@@ -50,7 +50,7 @@ func BenchmarkGet1000Records(b *testing.B) {
 	}
 }
 
-func BenchmarkGet10000Records(b *testing.B) {
+func BenchmarkGet1of10000Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(10000)
 	if err != nil {
 		b.Fatal(err)

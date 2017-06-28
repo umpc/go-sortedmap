@@ -2,7 +2,7 @@ package sortedmap
 
 import "testing"
 
-func BenchmarkBatchReplace1Record(b *testing.B) {
+func BenchmarkBatchReplace1of1Record(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(1)
 	if err != nil {
 		b.Fatal(err)
@@ -14,7 +14,7 @@ func BenchmarkBatchReplace1Record(b *testing.B) {
 	}
 }
 
-func BenchmarkBatchReplace10Records(b *testing.B) {
+func BenchmarkBatchReplace10of10Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(10)
 	if err != nil {
 		b.Fatal(err)
@@ -26,7 +26,7 @@ func BenchmarkBatchReplace10Records(b *testing.B) {
 	}
 }
 
-func BenchmarkBatchReplace100Records(b *testing.B) {
+func BenchmarkBatchReplace100of100Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(100)
 	if err != nil {
 		b.Fatal(err)
@@ -38,7 +38,7 @@ func BenchmarkBatchReplace100Records(b *testing.B) {
 	}
 }
 
-func BenchmarkBatchReplace1000Records(b *testing.B) {
+func BenchmarkBatchReplace1000of1000Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		b.Fatal(err)
@@ -50,7 +50,7 @@ func BenchmarkBatchReplace1000Records(b *testing.B) {
 	}
 }
 
-func BenchmarkBatchReplace10000Records(b *testing.B) {
+func BenchmarkBatchReplace10000of10000Records(b *testing.B) {
 	sm, records, err := newSortedMapFromRandRecords(10000)
 	if err != nil {
 		b.Fatal(err)

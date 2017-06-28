@@ -4,7 +4,7 @@
 
 SortedMap is a small library that provides a value-sorted ```map[interface{}]interface{}``` type and methods combined from Go 1 map and slice primitives.
 
-This data structure allows for roughly constant-time reads and for efficiently iterating over only a subsection of the stored values.
+This data structure allows for roughly constant-time reads and for efficiently iterating over only a section of stored values.
 
 ### Worst-Case Complexity
 Operation | Worst-Case
@@ -79,37 +79,37 @@ func randRecords(n int) []*sortedmap.Record {
 ## Benchmarks
 
 ```sh
-BenchmarkDelete1of1Record-8           	 5000000	       348 ns/op	       0 B/op	       0 allocs/op
-BenchmarkDelete1of10Records-8         	 3000000	       593 ns/op	       0 B/op	       0 allocs/op
-BenchmarkDelete1of100Records-8        	 2000000	       960 ns/op	       0 B/op	       0 allocs/op
-BenchmarkDelete1of1000Records-8       	 1000000	      2255 ns/op	       0 B/op	       0 allocs/op
-BenchmarkDelete1of10000Records-8      	  500000	      4346 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDelete1of1Record-8                  	 5000000	       386 ns/o       0 B/op	       0 allocs/op
+BenchmarkDelete1of10Records-8                	 3000000	       508 ns/o       0 B/op	       0 allocs/op
+BenchmarkDelete1of100Records-8               	 2000000	       893 ns/o       0 B/op	       0 allocs/op
+BenchmarkDelete1of1000Records-8              	 1000000	      1975 ns/o       0 B/op	       0 allocs/op
+BenchmarkDelete1of10000Records-8             	  500000	      3168 ns/o       0 B/op	       0 allocs/op
 
-BenchmarkGet1Record-8                 	50000000	        34.5 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet10Records-8               	50000000	        32.7 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet100Records-8              	30000000	        35.6 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet1000Records-8             	50000000	        31.4 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGet10000Records-8            	50000000	        31.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGet1of1Record-8                     	50000000	        33.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGet1of10Records-8                   	50000000	        29.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGet1of100Records-8                  	50000000	        30.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGet1of1000Records-8                 	50000000	        32.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGet1of10000Records-8                	50000000	        33.3 ns/op	       0 B/op	       0 allocs/op
 
-BenchmarkHas1Record-8                 	50000000	        33.0 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas10Records-8               	50000000	        32.1 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas100Records-8              	50000000	        35.5 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas1000Records-8             	50000000	        31.2 ns/op	       0 B/op	       0 allocs/op
-BenchmarkHas10000Records-8            	50000000	        34.4 ns/op	       0 B/op	       0 allocs/op
+BenchmarkHas1of1Record-8                     	50000000	        34.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkHas1of10Records-8                   	50000000	        32.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkHas1of100Records-8                  	50000000	        32.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkHas1of1000Records-8                 	50000000	        31.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkHas1of10000Records-8                	50000000	        33.3 ns/op	       0 B/op	       0 allocs/op
 
-BenchmarkBatchInsert1Record-8         	30000000	        55.6 ns/op	       1 B/op	       1 allocs/op
-BenchmarkBatchInsert10Records-8       	 3000000	       406 ns/op	      16 B/op	       1 allocs/op
-BenchmarkBatchInsert100Records-8      	  300000	      4950 ns/op	     112 B/op	       1 allocs/op
-BenchmarkBatchInsert1000Records-8     	   20000	     60208 ns/op	    1033 B/op	       1 allocs/op
-BenchmarkBatchInsert10000Records-8    	    2000	    797372 ns/op	   11295 B/op	       1 allocs/op
+BenchmarkBatchInsert1Record-8                	20000000	        56.1 ns/op	       1 B/op	       1 allocs/op
+BenchmarkBatchInsert10Records-8              	 3000000	       397 ns/o      16 B/op	       1 allocs/op
+BenchmarkBatchInsert100Records-8             	  300000	      4572 ns/o     112 B/op	       1 allocs/op
+BenchmarkBatchInsert1000Records-8            	   30000	     55933 ns/o    1030 B/op	       1 allocs/op
+BenchmarkBatchInsert10000Records-8           	    2000	    677099 ns/o   11293 B/op	       1 allocs/op
 
-BenchmarkBatchReplace1Record-8        	10000000	       250 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBatchReplace10Records-8      	  300000	      5784 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBatchReplace100Records-8     	   10000	    109066 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBatchReplace1000Records-8    	    1000	   1911582 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBatchReplace10000Records-8   	      20	  60068331 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBatchReplace1of1Record-8            	10000000	       205 ns/o       0 B/op	       0 allocs/op
+BenchmarkBatchReplace10of10Records-8         	  300000	      5457 ns/o       0 B/op	       0 allocs/op
+BenchmarkBatchReplace100of100Records-8       	   10000	    107118 ns/o       0 B/op	       0 allocs/op
+BenchmarkBatchReplace1000of1000Records-8     	    1000	   1982158 ns/o       0 B/op	       0 allocs/op
+BenchmarkBatchReplace10000of10000Records-8   	      20	  68456103 ns/o       0 B/op	       0 allocs/op
 
-BenchmarkNew-8                        	20000000	       119 ns/op	      96 B/op	       2 allocs/op
+BenchmarkNew-8                               	10000000	       119 ns/o      96 B/op	       2 allocs/op
 ```
 
 ## License
