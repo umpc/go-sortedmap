@@ -39,9 +39,9 @@ func main() {
 
   // Loop through records, in order, until reaching the given value:
   if ch, ok := sm.IterBetweenCh(time.Time{}, time.Now()); ok {
-	for rec := range ch {
-	  fmt.Printf("%+v\n", rec)
-	}
+    for rec := range ch {
+      fmt.Printf("%+v\n", rec)
+    }
   }
 
   // Check out the docs for more functionality and further explainations.
