@@ -95,18 +95,6 @@ func (sm *SortedMap) iterBetweenFunc(reversed bool, lowerBound, upperBound inter
 	}
 }
 
-// IterFunc passes each record to the specified callback function.
-// Sort order is reversed if the reversed argument is set to true.
-func (sm *SortedMap) IterFunc(reversed bool, f func(rec Record) bool) {
-	sm.iterFunc(reversed, f)
-}
-
-// IterBetweenFunc starts at the lower bound value and passes all values in the collection to the callback function until reaching the upper bounds value.
-// Sort order is reversed if the reversed argument is set to true.
-func (sm *SortedMap) IterBetweenFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec Record) bool) {
-	sm.iterBetweenFunc(reversed, lowerBound, upperBound, f)
-}
-
 // IterCh returns a channel that sorted records can be read from and processed.
 func (sm *SortedMap) IterCh() <-chan Record {
 	return sm.iterCh(false, 0)
@@ -131,4 +119,16 @@ func (sm *SortedMap) IterBetweenCh(lowerBound, upperBound interface{}) (<-chan R
 // Sort order is reversed if the reversed argument is set to true.
 func (sm *SortedMap) IterBetweenChCustom(reversed bool, bufSize int, lowerBound, upperBound interface{}) (<-chan Record, bool) {
 	return sm.iterBetweenCh(reversed, bufSize, lowerBound, upperBound)
+}
+
+// IterFunc passes each record to the specified callback function.
+// Sort order is reversed if the reversed argument is set to true.
+func (sm *SortedMap) IterFunc(reversed bool, f func(rec Record) bool) {
+	sm.iterFunc(reversed, f)
+}
+
+// IterBetweenFunc starts at the lower bound value and passes all values in the collection to the callback function until reaching the upper bounds value.
+// Sort order is reversed if the reversed argument is set to true.
+func (sm *SortedMap) IterBetweenFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec Record) bool) {
+	sm.iterBetweenFunc(reversed, lowerBound, upperBound, f)
 }
