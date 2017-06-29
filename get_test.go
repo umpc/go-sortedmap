@@ -12,30 +12,23 @@ func TestGet(t *testing.T) {
 			t.Fatalf("TestGet failed: %v", notFoundErr)
 		}
 	}
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBatchGet(t *testing.T) {
-	sm, records, err := newSortedMapFromRandRecords(1000)
+	sm, _, keys, err := newRandSortedMapWithKeys(1000)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	keys := make([]interface{}, len(records))
-	for i := range records {
-		keys[i] = records[i].Key
-	}
-
 	values, results := sm.BatchGet(keys)
 	for i, ok := range results {
 		if values[i] == nil || !ok {
 			t.Fatalf("TestBatchGet failed: %v", notFoundErr)
 		}
 	}
-
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 }

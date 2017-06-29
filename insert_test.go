@@ -15,8 +15,7 @@ func TestInsert(t *testing.T) {
 			t.Fatalf("Insert failed: %v", keyExistsErr)
 		}
 	}
-
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 
@@ -25,8 +24,7 @@ func TestInsert(t *testing.T) {
 			t.Fatalf("Insert failed: %v", notFoundErr)
 		}
 	}
-
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -40,7 +38,7 @@ func TestBatchInsert(t *testing.T) {
 			t.Fatalf("BatchInsert failed: %v", keyExistsErr)
 		}
 	}
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 }

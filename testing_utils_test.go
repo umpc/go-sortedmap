@@ -83,11 +83,7 @@ func newSortedMapFromRandRecords(n int) (*SortedMap, []*Record, error) {
 	sm := New(asc.Time)
 	sm.BatchReplace(records)
 
-	if err := verifyRecords(sm.Iter(), false); err != nil {
-		return nil, nil, err
-	}
-
-	return sm, records, nil
+	return sm, records, verifyRecords(sm.IterCh(), false)
 }
 
 func newRandSortedMapWithKeys(n int) (*SortedMap, []*Record, []interface{}, error) {

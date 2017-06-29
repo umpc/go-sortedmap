@@ -1,19 +1,33 @@
 package sortedmap
 
-import "sort"
+func (sm *SortedMap) sendRecord(ch chan Record, i int) {
+	rec := Record{
+		Key: sm.sorted[i],
+	}
+	rec.Val = sm.idx[rec.Key]
+	ch <- rec
+}
 
-func (sm *SortedMap) iter(bufSize int) <-chan Record {
+func (sm *SortedMap) returnRecord(i int) Record {
+	rec := Record{
+		Key: sm.sorted[i],
+	}
+	rec.Val = sm.idx[rec.Key]
+	return rec
+}
+
+func (sm *SortedMap) iterCh(reversed bool, bufSize int) <-chan Record {
 	ch := make(chan Record, bufSize)
 
 	go func(ch chan Record) {
-		smLen := len(sm.sorted)
-		for i := 0; i < smLen; i++ {
-			rec := Record{
-				Key: sm.sorted[i],
+		if reversed {
+			for i := len(sm.sorted) - 1; i > 0; i-- {
+				sm.sendRecord(ch, i)
 			}
-			rec.Val = sm.idx[rec.Key]
-
-			ch <- rec
+		} else {
+			for i := range sm.sorted {
+				sm.sendRecord(ch, i)
+			}
 		}
 		close(ch)
 	}(ch)
@@ -21,177 +35,100 @@ func (sm *SortedMap) iter(bufSize int) <-chan Record {
 	return ch
 }
 
-func (sm *SortedMap) iterUntil(bufSize int, val interface{}) <-chan Record {
+func (sm *SortedMap) iterBetweenCh(reversed bool, bufSize int, lowerBound, upperBound interface{}) (<-chan Record, bool) {
+
+	iterBounds := sm.between(lowerBound, upperBound)
+	if len(iterBounds) < 2 {
+		return nil, false
+	}
+
 	ch := make(chan Record, bufSize)
-
-	go func(ch chan Record) {
-		smLen := len(sm.sorted)
-		for i := 0; i < smLen; i++ {
-			rec := Record{
-				Key: sm.sorted[i],
+	go func(reversed bool, iterBounds []int, ch chan Record) {
+		if reversed {
+			for i := iterBounds[1]; i > iterBounds[0]; i-- {
+				sm.sendRecord(ch, i)
 			}
-			rec.Val = sm.idx[rec.Key]
+		} else {
+			for i := iterBounds[0]; i < iterBounds[1]; i++ {
+				sm.sendRecord(ch, i)
+			}
+		}
+		close(ch)
+	}(reversed, iterBounds, ch)
 
-			if sm.lessFn(val, rec.Val) {
+	return ch, true
+}
+
+func (sm *SortedMap) iterFunc(reversed bool, f func(rec Record) bool) {
+	if reversed {
+		for i := len(sm.sorted) - 1; i > 0; i-- {
+			if !f(sm.returnRecord(i)) {
 				break
 			}
-			ch <- rec
 		}
-		close(ch)
-	}(ch)
-
-	return ch
-}
-
-func (sm *SortedMap) iterAfter(bufSize int, val interface{}) <-chan Record {
-	ch := make(chan Record, bufSize)
-
-	go func(ch chan Record) {
-		smLen := len(sm.sorted)
-		i := sort.Search(smLen, func(i int) bool {
-			return sm.lessFn(val, sm.idx[sm.sorted[i]])
-		})
-		for; i < smLen; i++ {
-			rec := Record{
-				Key: sm.sorted[i],
-			}
-			rec.Val = sm.idx[rec.Key]
-
-			ch <- rec
-		}
-		close(ch)
-	}(ch)
-
-	return ch
-}
-
-func (sm *SortedMap) reverseIter(bufSize int) <-chan Record {
-	ch := make(chan Record, bufSize)
-
-	go func(ch chan Record) {
-		smLen := len(sm.sorted)
-		for i := smLen - 1; i > 0; i-- {
-			rec := Record{
-				Key: sm.sorted[i],
-			}
-			rec.Val = sm.idx[rec.Key]
-
-			ch <- rec
-		}
-		close(ch)
-	}(ch)
-
-	return ch
-}
-
-func (sm *SortedMap) reverseIterUntil(bufSize int, val interface{}) <-chan Record {
-	ch := make(chan Record, bufSize)
-
-	go func(ch chan Record) {
-		smLen := len(sm.sorted)
-		for i := smLen - 1; i > 0; i-- {
-			rec := Record{
-				Key: sm.sorted[i],
-			}
-			rec.Val = sm.idx[rec.Key]
-
-			if !sm.lessFn(val, rec.Val) {
+	} else {
+		for i := range sm.sorted {
+			if !f(sm.returnRecord(i)) {
 				break
 			}
-			ch <- rec
 		}
-		close(ch)
-	}(ch)
-
-	return ch
+	}
 }
 
-func (sm *SortedMap) reverseIterAfter(bufSize int, val interface{}) <-chan Record {
-	ch := make(chan Record, bufSize)
-
-	go func(ch chan Record) {
-		smLen := len(sm.sorted)
-		i := sort.Search(smLen, func(i int) bool {
-			return sm.lessFn(val, sm.idx[sm.sorted[i]])
-		})
-		for; i > 0; i-- {
-			rec := Record{
-				Key: sm.sorted[i],
+func (sm *SortedMap) iterBetweenFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec Record) bool) {
+	iterBounds := sm.between(lowerBound, upperBound)
+	if len(iterBounds) < 2 {
+		return
+	}
+	if reversed {
+		for i := iterBounds[1]; i > iterBounds[0]; i-- {
+			if !f(sm.returnRecord(i)) {
+				break
 			}
-			rec.Val = sm.idx[rec.Key]
-
-			ch <- rec
 		}
-		close(ch)
-	}(ch)
-
-	return ch
+	} else {
+		for i := iterBounds[0]; i < iterBounds[1]; i++ {
+			if !f(sm.returnRecord(i)) {
+				break
+			}
+		}
+	}
 }
 
-// Iter returns an unbuffered channel that sorted records can be read from and processed.
-func (sm *SortedMap) Iter() <-chan Record {
-	return sm.iter(0)
+// IterFunc passes each record to the specified callback function.
+// Sort order is reversed if the reversed argument is set to true.
+func (sm *SortedMap) IterFunc(reversed bool, f func(rec Record) bool) {
+	sm.iterFunc(reversed, f)
 }
 
-// IterUntil returns an unbuffered channel that sorted records can be read from and processed.
-// IterUntil starts at the lowest value in the collection and sends all values until reaching the given value.
-func (sm *SortedMap) IterUntil(val interface{}) <-chan Record {
-	return sm.iterUntil(0, val)
+// IterBetweenFunc starts at the lower bound value and passes all values in the collection to the callback function until reaching the upper bounds value.
+// Sort order is reversed if the reversed argument is set to true.
+func (sm *SortedMap) IterBetweenFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec Record) bool) {
+	sm.iterBetweenFunc(reversed, lowerBound, upperBound, f)
 }
 
-// IterAfter returns an unbuffered channel that sorted records can be read from and processed.
-// IterAfter starts at the given value and sends all values until reaching the end of the collection.
-func (sm *SortedMap) IterAfter(val interface{}) <-chan Record {
-	return sm.iterAfter(0, val)
+// IterCh returns a channel that sorted records can be read from and processed.
+func (sm *SortedMap) IterCh() <-chan Record {
+	return sm.iterCh(false, 0)
 }
 
-// ReverseIter returns an unbuffered channel that reverse-sorted records can be read from and processed.
-func (sm *SortedMap) ReverseIter() <-chan Record {
-	return sm.reverseIter(0)
+// IterChCustom returns a channel that sorted records can be read from and processed, with custom options.
+func (sm *SortedMap) IterChCustom(reversed bool, bufSize int) <-chan Record {
+	return sm.iterCh(reversed, bufSize)
 }
 
-// ReverseIterUntil returns an unbuffered channel that reverse-sorted records can be read from and processed.
-// ReverseIterUntil starts at the highest value in the collection and sends all values until reaching the given value.
-func (sm *SortedMap) ReverseIterUntil(val interface{}) <-chan Record {
-	return sm.reverseIterUntil(0, val)
+// IterBetweenCh returns a channel that sorted records can be read from and processed,
+// and a boolean value that indicates whether or not values in the collection fall between the given bounds.
+// IterBetweenCh starts at the lower bound value and sends all values in the collection until reaching the upper bounds value.
+// Sort order is reversed if the reversed argument is set to true.
+func (sm *SortedMap) IterBetweenCh(lowerBound, upperBound interface{}) (<-chan Record, bool) {
+	return sm.iterBetweenCh(false, 0, lowerBound, upperBound)
 }
 
-// ReverseIterAfter returns an unbuffered channel that reverse-sorted records can be read from and processed.
-// ReverseIterAfter starts at the given value and sends all values until reaching the beginning of the collection.
-func (sm *SortedMap) ReverseIterAfter(val interface{}) <-chan Record {
-	return sm.reverseIterAfter(0, val)
-}
-
-// BufferedIter returns a buffered channel that sorted records can be read from and processed.
-func (sm *SortedMap) BufferedIter(bufSize int) <-chan Record {
-	return sm.iter(bufSize)
-}
-
-// BufferedIterUntil returns a buffered channel that sorted records can be read from and processed.
-// BufferedIterUntil starts at the lowest value in the collection and sends all values until reaching the given value.
-func (sm *SortedMap) BufferedIterUntil(bufSize int, val interface{}) <-chan Record {
-	return sm.iterUntil(bufSize, val)
-}
-
-// BufferedIterAfter returns a buffered channel that sorted records can be read from and processed.
-// BufferedIterAfter starts at the given value and sends all values until reaching the end of the collection.
-func (sm *SortedMap) BufferedIterAfter(bufSize int, val interface{}) <-chan Record {
-	return sm.iterAfter(bufSize, val)
-}
-
-// BufferedReverseIter returns a buffered channel that reverse-sorted records can be read from and processed.
-func (sm *SortedMap) BufferedReverseIter(bufSize int) <-chan Record {
-	return sm.reverseIter(bufSize)
-}
-
-// BufferedReverseIterUntil returns a buffered channel that reverse-sorted records can be read from and processed.
-// BufferedReverseIterUntil starts at the highest value in the collection and sends all values until reaching the given value.
-func (sm *SortedMap) BufferedReverseIterUntil(bufSize int, val interface{}) <-chan Record {
-	return sm.reverseIterUntil(bufSize, val)
-}
-
-// BufferedReverseIterAfter returns a buffered channel that reverse-sorted records can be read from and processed.
-// BufferedReverseIterAfter starts at the given value and sends all values until reaching the beginning of the collection.
-func (sm *SortedMap) BufferedReverseIterAfter(bufSize int, val interface{}) <-chan Record {
-	return sm.reverseIterAfter(bufSize, val)
+// IterBetweenChCustom returns a channel that sorted records can be read from and processed,
+// and a boolean value that indicates whether or not values in the collection fall between the given bounds.
+// IterBetweenChCustom starts at the lower bound value and sends all values in the collection until reaching the upper bounds value.
+// Sort order is reversed if the reversed argument is set to true.
+func (sm *SortedMap) IterBetweenChCustom(reversed bool, bufSize int, lowerBound, upperBound interface{}) (<-chan Record, bool) {
+	return sm.iterBetweenCh(reversed, bufSize, lowerBound, upperBound)
 }

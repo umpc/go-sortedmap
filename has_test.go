@@ -12,29 +12,22 @@ func TestHas(t *testing.T) {
 			t.Fatalf("TestHas failed: %v", notFoundErr)
 		}
 	}
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestBatchHas(t *testing.T) {
-	sm, records, err := newSortedMapFromRandRecords(1000)
+	sm, _, keys, err := newRandSortedMapWithKeys(1000)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	keys := make([]interface{}, len(records))
-	for i := range records {
-		keys[i] = records[i].Key
-	}
-
 	for _, ok := range sm.BatchHas(keys) {
 		if !ok {
-			t.Fatalf("BatchHas: %v", notFoundErr)
+			t.Fatalf("TestBatchHas failed: %v", notFoundErr)
 		}
 	}
-
-	if err := verifyRecords(sm.Iter(), false); err != nil {
+	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 }
