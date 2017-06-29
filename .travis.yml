@@ -5,6 +5,9 @@ go:
   - 1.8
   - 1.x
   - master
+os:
+  - linux
+  - osx
 before_install:
   - go get -t -v ./...
 script:
