@@ -127,9 +127,7 @@ BenchmarkBatchReplace10000of10000Records-8   	     100	  20771583 ns/op	   10240
 BenchmarkNew-8                               	10000000	       124 ns/op	      96 B/op	       2 allocs/op
 ```
 
-Better performance than the displayed benchmark test results is possible. The benchmark tests include some overhead from benchmark test functions that have been abstracted for easier comprehension and maintenance.
-
-The above benchmark tests were ran on a 2.6GHz Intel Core i7-6700HQ (Skylake) CPU.
+The above benchmark tests pause to reset their memory contents between iterations to reduce the interference of CPU caching. The tests were ran on a 2.6GHz Intel Core i7-6700HQ (Skylake) CPU.
 
 ## License
 
