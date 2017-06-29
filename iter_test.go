@@ -25,7 +25,7 @@ func TestIterChCustom(t *testing.T) {
 func TestIterBetweenCh(t *testing.T) {
 	const (
 		twoNilBoundValsErr = "accepted two nil bound values"
-		generalBoundsErr = "only one bound value"
+		generalBoundsErr = "between bounds error"
 	)
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
@@ -35,12 +35,12 @@ func TestIterBetweenCh(t *testing.T) {
 
 	_, ok := sm.IterBetweenCh(nil, nil)
 	if ok {
-		t.Fatalf("TestIterBetween failed: %v", twoNilBoundValsErr)
+		t.Fatalf("TestIterBetweenCh failed: %v", twoNilBoundValsErr)
 	}
 
 	ch, ok := sm.IterBetweenCh(time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC), time.Now())
 	if !ok {
-		t.Fatalf("TestIterBetween failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
@@ -48,7 +48,28 @@ func TestIterBetweenCh(t *testing.T) {
 
 	ch, ok = sm.IterBetweenCh(time.Now(), time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC))
 	if !ok {
-		t.Fatalf("TestIterBetween failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+	}
+	if err := verifyRecords(ch, reversed); err != nil {
+		t.Fatal(err)
+	}
+
+	ch, ok = sm.IterBetweenCh(time.Now(), time.Date(5321, 1, 1, 0, 0, 0, 0, time.UTC))
+	if !ok {
+		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+	}
+	if err := verifyRecords(ch, reversed); err != nil {
+		t.Fatal(err)
+	}
+
+	ch, ok = sm.IterBetweenCh(time.Date(5321, 1, 1, 0, 0, 0, 0, time.UTC), time.Now())
+	if !ok {
+		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+	}
+
+	ch, ok = sm.IterBetweenCh(time.Date(5321, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(5321, 1, 1, 0, 0, 0, 0, time.UTC))
+	if !ok {
+		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
