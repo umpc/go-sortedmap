@@ -38,8 +38,10 @@ func main() {
   sm.BatchInsert(records)
 
   // Loop through records, in order, until reaching the given value:
-  for rec := range sm.IterBetweenCh(time.time{}, time.Now()) {
-    fmt.Printf("%+v\n", rec)
+  if ch, ok := sm.IterBetweenCh(time.Time{}, time.Now()); ok {
+	for rec := range ch {
+	  fmt.Printf("%+v\n", rec)
+	}
   }
 
   // Check out the docs for more functionality and further explainations.
