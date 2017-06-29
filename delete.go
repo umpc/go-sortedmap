@@ -28,11 +28,11 @@ func (sm *SortedMap) delete(key interface{}) bool {
 }
 
 func (sm *SortedMap) deleteBetween(lowerBound, upperBound interface{}) bool {
-	bounds := sm.between(lowerBound, upperBound)
-	if len(bounds) < 2 {
+	iterBounds := sm.between(lowerBound, upperBound)
+	if len(iterBounds) < 2 {
 		return false
 	}
-	for i := bounds[0]; i < bounds[1] - 1; i++ {
+	for i := iterBounds[0]; i < iterBounds[1] - 1; i++ {
 		delete(sm.idx, sm.sorted[i])
 		sm.sorted = deleteInterface(sm.sorted, i)
 	}
