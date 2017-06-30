@@ -8,7 +8,7 @@ import (
 const (
 	nilBoundValsErr = "accepted nil bound values"
 	generalBoundsErr = "between bounds error"
-	nilRecErr = "nil record!"
+	nilValErr = "nil value!"
 	nonNilValErr = "non-nil value"
 	runawayIterErr = "runaway iterator!"
 )
@@ -40,6 +40,26 @@ func TestIterChTimeout(t *testing.T) {
 		}
 	} else {
 		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
+	}
+}
+
+func TestIterChParamsBounds(t *testing.T) {
+	params := new(IterChParams)
+	if params.Bounds() != nil {
+		t.Fatalf("TestCustomIterCh failed: %v", nonNilValErr)
+	}
+	params.LowerBound = 0
+	if params.Bounds() != nil {
+		t.Fatalf("TestCustomIterCh failed: %v", nonNilValErr)
+	}
+	params = new(IterChParams)
+	params.UpperBound = 0
+	if params.Bounds() != nil {
+		t.Fatalf("TestCustomIterCh failed: %v", nonNilValErr)
+	}
+	params.LowerBound = 0
+	if params.Bounds() == nil {
+		t.Fatalf("TestCustomIterCh failed: %v", nilValErr)
 	}
 }
 
@@ -148,11 +168,6 @@ func TestCustomIterCh(t *testing.T) {
 		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
 	}
 
-	// nil bounds method check
-	if params.Bounds() != nil {
-		t.Fatalf("TestCustomIterCh failed: %v", nonNilValErr)
-	}
-
 	params = &IterChParams{
 		Reversed: reversed,
 		BufSize: buffSize,
@@ -204,13 +219,13 @@ func TestIterFunc(t *testing.T) {
 	}
 	sm.IterFunc(false, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestIterFunc failed: %v", nilValErr)
 		}
 		return true
 	})
 	sm.IterFunc(true, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestIterFunc failed: %v", nilValErr)
 		}
 		return true
 	})
@@ -243,40 +258,40 @@ func TestBoundedIterFunc(t *testing.T) {
 
 	sm.BoundedIterFunc(false, nil, nil, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return false
 	})
 
 	sm.BoundedIterFunc(false, nil, laterDate, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return false
 	})
 
 	sm.BoundedIterFunc(false, laterDate, nil, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return false
 	})
 
 	sm.BoundedIterFunc(false, earlierDate, laterDate, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return true
 	})
 	sm.BoundedIterFunc(true, laterDate, earlierDate, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return true
 	})
 	sm.BoundedIterFunc(true, laterDate, earlierDate, func(rec *Record) bool {
 		if rec == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilRecErr)
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return true
 	})
