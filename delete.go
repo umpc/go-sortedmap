@@ -32,7 +32,7 @@ func (sm *SortedMap) deleteBetween(lowerBound, upperBound interface{}) bool {
 	if len(iterBounds) < 2 {
 		return false
 	}
-	for i := iterBounds[0]; i < iterBounds[1] - 1; i++ {
+	for i := iterBounds[0]; i < iterBounds[1]; i++ {
 		delete(sm.idx, sm.sorted[i])
 		sm.sorted = deleteInterface(sm.sorted, i)
 	}
