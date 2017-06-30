@@ -13,20 +13,22 @@ func (sm *SortedMap) between(lowerBound, upperBound interface{}) []int {
 		return sm.lessFn(lowerBound, sm.idx[sm.sorted[i]])
 	})
 
-	// Return if lowerBoundIdx is higher than all other slice indexes.
+	// Lower bound is the largest value. Select the last index.
 	if lowerBoundIdx == smLen {
-		return nil
+		lowerBoundIdx--
 	}
 
 	upperBoundIdx := sort.Search(smLen, func(i int) bool {
 		return sm.lessFn(upperBound, sm.idx[sm.sorted[i]])
 	})
 
+	if upperBoundIdx == smLen {
+		upperBoundIdx--
+	}
+
 	// sort.Search returns the smallest index i in [0, n) at which f(i) is true.
 	// This check stops the deletion of values larger than the upperBound value.
-	if upperBoundIdx == smLen {
-		upperBoundIdx -= 2
-	} else if upperBoundIdx > 0 {
+	if upperBoundIdx > 0 {
 		upperBoundIdx--
 	}
 
