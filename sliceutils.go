@@ -10,7 +10,7 @@ func insertInterface(s []interface{}, v interface{}, i int) []interface{} {
 	return s
 }
 
-// deleteInterfaces deletes n interface{} values, in order, starting at index i,
+// deleteInterface deletes an interface{} value from slice s, at index i,
 // and then returns an updated reference.
 func deleteInterface(s []interface{}, i int) []interface{} {
 	copy(s[i:], s[i + 1:])
