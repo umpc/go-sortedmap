@@ -28,10 +28,11 @@ func setLessFunc(lessFn SortLessFunc) SortLessFunc {
 	return lessFn
 }
 
-// New creates and initializes a new SortedMap structure with a preallocated slice of capacity n, and returns a reference to it.
+// New creates and initializes a new SortedMap structure and then returns a reference to it.
+// New SortedMaps are created with a backing map/slice of length/capacity n.
 func New(n int, lessFn SortLessFunc) *SortedMap {
 	return &SortedMap{
-		idx:    make(map[interface{}]interface{}),
+		idx:    make(map[interface{}]interface{}, n),
 		sorted: make([]interface{}, 0, n),
 		lessFn: setLessFunc(lessFn),
 	}
