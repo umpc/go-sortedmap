@@ -4,7 +4,6 @@ go:
   - 1.x
 os:
   - linux
-  - osx
 before_install:
   - go get -t -v ./...
 script:
