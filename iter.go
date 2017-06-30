@@ -31,6 +31,7 @@ func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout *time.Duration, i in
 
 	if sendTimeout == nil {
 		ch <- rec
+		return true
 	} else {
 		select {
 		case ch <- rec:
