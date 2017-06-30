@@ -15,7 +15,7 @@ type IterChParams struct{
 	UpperBound interface{}
 }
 
-// IterCallbackFunc defines the type of function that is passed into an IterFunc method and its single argument, a reference to a record value.
+// IterCallbackFunc defines the type of function that is passed into an IterFunc method and its single argument, which is a reference to a record value.
 type IterCallbackFunc func(rec *Record) bool
 
 func setBufSize(bufSize int) int {
