@@ -9,6 +9,7 @@ const (
 	nilBoundValsErr = "accepted nil bound values"
 	generalBoundsErr = "between bounds error"
 	nilRecErr = "nil record!"
+	nonNilValErr = "non-nil value"
 	runawayIterErr = "runaway iterator!"
 )
 
@@ -25,12 +26,18 @@ func TestIterChTimeout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	timeout := 15 * time.Second
+	timeout := 1 * time.Millisecond
 	params := &IterChParams{
 		SendTimeout: &timeout,
 	}
-	if _, ok := sm.CustomIterCh(params); ok {
-		// Add some form of more advanced timeout test here.
+	if ch, ok := sm.CustomIterCh(params); ok {
+		for i := 0; i < 5; i++ {
+			time.Sleep(1 * time.Second)
+			rec := <- ch
+			if i > 1 && rec.Key != nil {
+				t.Fatalf("TestCustomIterCh failed: %v: %v", nonNilValErr, rec.Key)
+			}
+		}
 	} else {
 		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
 	}
@@ -143,7 +150,7 @@ func TestCustomIterCh(t *testing.T) {
 
 	// nil bounds method check
 	if params.Bounds() != nil {
-		t.Fatalf("TestCustomIterCh failed: %v", "bounds method returned a non-nil value")
+		t.Fatalf("TestCustomIterCh failed: %v", nonNilValErr)
 	}
 
 	params = &IterChParams{
