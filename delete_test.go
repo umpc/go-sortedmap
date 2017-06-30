@@ -45,7 +45,7 @@ func TestBatchDelete(t *testing.T) {
 	}
 }
 
-func TestDeleteRange(t *testing.T) {
+func TestBoundedDelete(t *testing.T) {
 	const (
 		nilBoundValsErr = "accepted nil bound value"
 		generalBoundsErr = "general bounds error"
@@ -58,37 +58,37 @@ func TestDeleteRange(t *testing.T) {
 
 	earlierDate := time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	if sm.DeleteRange(nil, nil) {
-		t.Fatalf("TestDeleteRange failed: %v", generalBoundsErr)
+	if sm.BoundedDelete(nil, nil) {
+		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 
-	if sm.DeleteRange(nil, time.Now()) {
-		t.Fatalf("TestDeleteRange failed: %v", generalBoundsErr)
+	if sm.BoundedDelete(nil, time.Now()) {
+		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 
-	if sm.DeleteRange(time.Now(), nil) {
-		t.Fatalf("TestDeleteRange failed: %v", generalBoundsErr)
+	if sm.BoundedDelete(time.Now(), nil) {
+		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 
-	if !sm.DeleteRange(earlierDate, time.Now()) {
-		t.Fatalf("TestDeleteRange failed: %v", generalBoundsErr)
+	if !sm.BoundedDelete(earlierDate, time.Now()) {
+		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 
-	if !sm.DeleteRange(time.Now(), earlierDate) {
-		t.Fatalf("TestDeleteRange failed: %v", generalBoundsErr)
+	if !sm.BoundedDelete(time.Now(), earlierDate) {
+		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
 	}
 
-	if !sm.DeleteRange(earlierDate, earlierDate) {
-		t.Fatalf("TestDeleteRange failed: %v", generalBoundsErr)
+	if !sm.BoundedDelete(earlierDate, earlierDate) {
+		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
 		t.Fatal(err)
