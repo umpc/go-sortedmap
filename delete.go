@@ -27,8 +27,8 @@ func (sm *SortedMap) delete(key interface{}) bool {
 	return false
 }
 
-func (sm *SortedMap) deleteBetween(lowerBound, upperBound interface{}) bool {
-	iterBounds := sm.between(lowerBound, upperBound)
+func (sm *SortedMap) deleteRange(lowerBound, upperBound interface{}) bool {
+	iterBounds := sm.rangeIdxSearch(lowerBound, upperBound)
 	if len(iterBounds) < 2 {
 		return false
 	}
@@ -54,8 +54,8 @@ func (sm *SortedMap) BatchDelete(keys []interface{}) []bool {
 	return results
 }
 
-// DeleteBetween removes values that are between the given values from the collection.
-// DeleteBetween returns true if the operation was successful, or false otherwise.
-func (sm *SortedMap) DeleteBetween(lowerBound, upperBound interface{}) bool {
-	return sm.deleteBetween(lowerBound, upperBound)
+// DeleteRange removes values that are between the given values from the collection.
+// DeleteRange returns true if the operation was successful, or false otherwise.
+func (sm *SortedMap) DeleteRange(lowerBound, upperBound interface{}) bool {
+	return sm.deleteRange(lowerBound, upperBound)
 }

@@ -31,7 +31,7 @@ func TestIterChCustom(t *testing.T) {
 	}
 }
 
-func TestIterBetweenCh(t *testing.T) {
+func TestIterRangeCh(t *testing.T) {
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		t.Fatal(err)
@@ -41,74 +41,74 @@ func TestIterBetweenCh(t *testing.T) {
 	earlierDate := time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
 	laterDate := time.Date(5321, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	_, ok := sm.IterBetweenCh(nil, nil)
+	_, ok := sm.IterRangeCh(nil, nil)
 	if ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", nilBoundValsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", nilBoundValsErr)
 	}
 
-	ch, ok := sm.IterBetweenCh(time.Time{}, time.Time{})
+	ch, ok := sm.IterRangeCh(time.Time{}, time.Time{})
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenCh(time.Time{}, maxTime)
+	ch, ok = sm.IterRangeCh(time.Time{}, maxTime)
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenCh(maxTime, time.Time{})
+	ch, ok = sm.IterRangeCh(maxTime, time.Time{})
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenCh(earlierDate, time.Now())
+	ch, ok = sm.IterRangeCh(earlierDate, time.Now())
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenCh(time.Now(), earlierDate)
+	ch, ok = sm.IterRangeCh(time.Now(), earlierDate)
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenCh(time.Now(), laterDate)
+	ch, ok = sm.IterRangeCh(time.Now(), laterDate)
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenCh(laterDate, time.Now())
+	ch, ok = sm.IterRangeCh(laterDate, time.Now())
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 
-	ch, ok = sm.IterBetweenCh(laterDate, laterDate)
+	ch, ok = sm.IterRangeCh(laterDate, laterDate)
 	if !ok {
-		t.Fatalf("TestIterBetweenCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRangeCh failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestIterBetweenChCustom(t *testing.T) {
+func TestIterRangeChCustom(t *testing.T) {
 	const (
 		nilBoundValsErr = "accepted two nil bound values"
 		generalBoundsErr = "only one bound value"
@@ -124,31 +124,31 @@ func TestIterBetweenChCustom(t *testing.T) {
 	earlierDate := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 	laterDate := time.Now()
 
-	_, ok := sm.IterBetweenChCustom(reversed, buffSize, nil, nil)
+	_, ok := sm.IterRangeChCustom(reversed, buffSize, nil, nil)
 	if ok {
-		t.Fatalf("TestIterBetween failed: %v", nilBoundValsErr)
+		t.Fatalf("TestIterRange failed: %v", nilBoundValsErr)
 	}
 
-	ch, ok := sm.IterBetweenChCustom(reversed, buffSize, earlierDate, laterDate)
+	ch, ok := sm.IterRangeChCustom(reversed, buffSize, earlierDate, laterDate)
 	if !ok {
-		t.Fatalf("TestIterBetween failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRange failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
-	ch, ok = sm.IterBetweenChCustom(reversed, buffSize, laterDate, earlierDate)
+	ch, ok = sm.IterRangeChCustom(reversed, buffSize, laterDate, earlierDate)
 	if !ok {
-		t.Fatalf("TestIterBetween failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRange failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
 	}
 
 	reversed = false
-	ch, ok = sm.IterBetweenChCustom(reversed, buffSize, laterDate, earlierDate)
+	ch, ok = sm.IterRangeChCustom(reversed, buffSize, laterDate, earlierDate)
 	if !ok {
-		t.Fatalf("TestIterBetween failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterRange failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(ch, reversed); err != nil {
 		t.Fatal(err)
@@ -190,7 +190,7 @@ func TestIterFunc(t *testing.T) {
 	})
 }
 
-func TestIterBetweenFunc(t *testing.T) {
+func TestIterRangeFunc(t *testing.T) {
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		t.Fatal(err)
@@ -199,51 +199,51 @@ func TestIterBetweenFunc(t *testing.T) {
 	earlierDate := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 	laterDate := time.Now()
 
-	sm.IterBetweenFunc(false, nil, nil, func(rec Record) bool {
-		t.Fatalf("TestIterBetweenFunc failed: %v", nilBoundValsErr)
+	sm.IterRangeFunc(false, nil, nil, func(rec Record) bool {
+		t.Fatalf("TestIterRangeFunc failed: %v", nilBoundValsErr)
 		return false
 	})
 
-	sm.IterBetweenFunc(false, nil, laterDate, func(rec Record) bool {
-		t.Fatalf("TestIterBetweenFunc failed: %v", nilBoundValsErr)
+	sm.IterRangeFunc(false, nil, laterDate, func(rec Record) bool {
+		t.Fatalf("TestIterRangeFunc failed: %v", nilBoundValsErr)
 		return false
 	})
 
-	sm.IterBetweenFunc(false, laterDate, nil, func(rec Record) bool {
-		t.Fatalf("TestIterBetweenFunc failed: %v", nilBoundValsErr)
+	sm.IterRangeFunc(false, laterDate, nil, func(rec Record) bool {
+		t.Fatalf("TestIterRangeFunc failed: %v", nilBoundValsErr)
 		return false
 	})
 
-	sm.IterBetweenFunc(false, earlierDate, laterDate, func(rec Record) bool {
+	sm.IterRangeFunc(false, earlierDate, laterDate, func(rec Record) bool {
 		if rec.Key == nil {
-			t.Fatalf("TestIterBetweenFunc failed: %v", nilRecErr)
+			t.Fatalf("TestIterRangeFunc failed: %v", nilRecErr)
 		}
 		return true
 	})
-	sm.IterBetweenFunc(true, laterDate, earlierDate, func(rec Record) bool {
+	sm.IterRangeFunc(true, laterDate, earlierDate, func(rec Record) bool {
 		if rec.Key == nil {
-			t.Fatalf("TestIterBetweenFunc failed: %v", nilRecErr)
+			t.Fatalf("TestIterRangeFunc failed: %v", nilRecErr)
 		}
 		return true
 	})
-	sm.IterBetweenFunc(true, laterDate, earlierDate, func(rec Record) bool {
+	sm.IterRangeFunc(true, laterDate, earlierDate, func(rec Record) bool {
 		if rec.Key == nil {
-			t.Fatalf("TestIterBetweenFunc failed: %v", nilRecErr)
+			t.Fatalf("TestIterRangeFunc failed: %v", nilRecErr)
 		}
 		return true
 	})
 	i := 0
-	sm.IterBetweenFunc(false, laterDate, earlierDate, func(rec Record) bool {
+	sm.IterRangeFunc(false, laterDate, earlierDate, func(rec Record) bool {
 		if i > 0 {
-			t.Fatalf("TestIterBetweenFunc failed: %v", runawayIterErr)
+			t.Fatalf("TestIterRangeFunc failed: %v", runawayIterErr)
 		}
 		i++
 		return false
 	})
 	i = 0
-	sm.IterBetweenFunc(true, laterDate, earlierDate, func(rec Record) bool {
+	sm.IterRangeFunc(true, laterDate, earlierDate, func(rec Record) bool {
 		if i > 0 {
-			t.Fatalf("TestIterBetweenFunc failed: %v", runawayIterErr)
+			t.Fatalf("TestIterRangeFunc failed: %v", runawayIterErr)
 		}
 		i++
 		return false
