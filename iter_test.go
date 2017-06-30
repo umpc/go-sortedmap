@@ -26,13 +26,13 @@ func TestIterChTimeout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	timeout := 1 * time.Millisecond
+	timeout := 1 * time.Microsecond
 	params := &IterChParams{
 		SendTimeout: &timeout,
 	}
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
-			time.Sleep(1 * time.Second)
+			time.Sleep(5 * time.Microsecond)
 			rec := <- ch
 			if i > 1 && rec.Key != nil {
 				t.Fatalf("TestCustomIterCh failed: %v: %v", nonNilValErr, rec.Key)

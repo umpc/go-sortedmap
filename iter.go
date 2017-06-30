@@ -23,7 +23,7 @@ func setBufSize(bufSize int) int {
 	return bufSize
 }
 
-func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout *time.Duration, i int) {
+func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout *time.Duration, i int) bool {
 	rec := Record{}
 
 	rec.Key = sm.sorted[i]
@@ -33,10 +33,13 @@ func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout *time.Duration, i in
 		ch <- rec
 	} else {
 		select {
-			case ch <- rec:
-			case <-time.After(*sendTimeout):
+		case ch <- rec:
+			return true
+		case <-time.After(*sendTimeout):
+			break
 		}
 	}
+	return false
 }
 
 func (sm *SortedMap) returnRecord(i int) *Record {
@@ -93,20 +96,28 @@ func (sm *SortedMap) iterCh(params *IterChParams) (<-chan Record, bool) {
 
 			if params.Reversed {
 				for i := iterBounds[1]; i > iterBounds[0]; i-- {
-					sm.sendRecord(ch, params.SendTimeout, i)
+					if !sm.sendRecord(ch, params.SendTimeout, i) {
+						break
+					}
 				}
 			} else {
 				for i := iterBounds[0]; i < iterBounds[1]; i++ {
-					sm.sendRecord(ch, params.SendTimeout, i)
+					if !sm.sendRecord(ch, params.SendTimeout, i) {
+						break
+					}
 				}
 			}
 		} else if params.Reversed {
 			for i := len(sm.sorted) - 1; i > 0; i-- {
-				sm.sendRecord(ch, params.SendTimeout, i)
+				if !sm.sendRecord(ch, params.SendTimeout, i) {
+					break
+				}
 			}
 		} else {
 			for i := range sm.sorted {
-				sm.sendRecord(ch, params.SendTimeout, i)
+				if !sm.sendRecord(ch, params.SendTimeout, i) {
+					break
+				}
 			}
 		}
 		close(ch)
