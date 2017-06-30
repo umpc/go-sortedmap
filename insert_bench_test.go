@@ -8,7 +8,7 @@ import (
 
 func insertRecord(b *testing.B) {
 	records := randRecords(1)
-	sm := New(asc.Time)
+	sm := New(0, asc.Time)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -16,14 +16,14 @@ func insertRecord(b *testing.B) {
 
 		b.StopTimer()
 		records = randRecords(1)
-		sm = New(asc.Time)
+		sm = New(0, asc.Time)
 		b.StartTimer()
 	}
 }
 
 func batchInsertRecords(b *testing.B, n int) {
 	records := randRecords(n)
-	sm := New(asc.Time)
+	sm := New(0, asc.Time)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -31,7 +31,7 @@ func batchInsertRecords(b *testing.B, n int) {
 
 		b.StopTimer()
 		records = randRecords(n)
-		sm = New(asc.Time)
+		sm = New(0, asc.Time)
 		b.StartTimer()
 	}
 }

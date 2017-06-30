@@ -12,6 +12,6 @@ func BenchmarkNew(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		sm = New(asc.Time)
+		sm = New(0, asc.Time)
 	}
 }

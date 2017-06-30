@@ -35,10 +35,17 @@ import (
 )
 
 func main() {
-  records := randRecords(23)
+  n := 23
+  records := randRecords(n)
 
-  // Create a new collection and set its insertion sort order:
-  sm := sortedmap.New(asc.Time)
+  // Create a new collection:
+  sm := sortedmap.New(n, asc.Time)
+
+  // The value of n sets the initial backing slice capacity to reduce allocations.
+  // Ascending-order sort for time.Time values has been selected for this example.
+  // More sort conditional functions are available in this package's subdirectories.
+
+  // Insert the example records:
   sm.BatchInsert(records)
 
   // Loop through records, in order, until reaching the given value:
