@@ -31,7 +31,7 @@ func TestIterChTimeout(t *testing.T) {
 
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
-			time.Sleep(5 * time.Microsecond)
+			time.Sleep(10 * time.Microsecond)
 			rec := <- ch
 			if i > 1 && rec.Key != nil {
 				t.Fatalf("TestCustomIterCh failed: %v: %v", nonNilValErr, rec.Key)

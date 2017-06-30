@@ -2,6 +2,11 @@ package sortedmap
 
 import "time"
 
+// IterChParams contains configurable settings for CustomIterCh.
+// SendTimeout is disabled by default, though it should be set to allow
+// channel send goroutines to time-out.
+// BufSize is set to 1 if its field is set to a lower value.
+// LowerBound and UpperBound default to regular iteration when left unset.
 type IterChParams struct{
 	Reversed bool
 	SendTimeout time.Duration
@@ -10,6 +15,7 @@ type IterChParams struct{
 	UpperBound interface{}
 }
 
+// IterCallbackFunc defines the type of function that is passed into an IterFunc method and its single argument, a reference to a record value.
 type IterCallbackFunc func(rec *Record) bool
 
 func setBufSize(bufSize int) int {
@@ -37,7 +43,6 @@ func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout time.Duration, i int
 	select {
 	case ch <- rec:
 		return true
-
 	case <-time.After(sendTimeout):
 		break
 	}
@@ -53,6 +58,8 @@ func (sm *SortedMap) returnRecord(i int) *Record {
 	return rec
 }
 
+// parseChBoundParams returns a new reference to default parameters
+// if no parameters reference was passed into the method.
 func (sm *SortedMap) parseChBoundParams(params *IterChParams) *IterChParams {
 	localParams := new(IterChParams)
 
@@ -71,7 +78,9 @@ func (sm *SortedMap) parseChBoundParams(params *IterChParams) *IterChParams {
 	return localParams
 }
 
-func (params *IterChParams) Bounds() []int {
+// (*IterChParams).bounds returns a slice containing the lower and upper bound indexes
+// after being obtained and set using (*SortedMap).boundsIdxSearch
+func (params *IterChParams) bounds() []int {
 	switch params.LowerBound.(type) {
 	case int:
 	default:
@@ -95,7 +104,7 @@ func (sm *SortedMap) iterCh(params *IterChParams) (<-chan Record, bool) {
 
 	go func(params *IterChParams, ch chan Record) {
 		if params.LowerBound != nil && params.UpperBound != nil {
-			iterBounds := params.Bounds()
+			iterBounds := params.bounds()
 
 			if params.Reversed {
 				for i := iterBounds[1]; i > iterBounds[0]; i-- {
