@@ -27,7 +27,7 @@ func TestIterChTimeout(t *testing.T) {
 		t.Fatal(err)
 	}
 	timeout := 1 * time.Microsecond
-	sleepDur := 10 * time.Microsecond
+	sleepDur := 10 * time.Millisecond
 	params := &IterChParams{SendTimeout: timeout}
 
 	ch := sm.CustomIterCh(params)
