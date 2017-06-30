@@ -25,7 +25,7 @@ func TestIterChTimeout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	timeout := 1 * time.Second
+	timeout := 15 * time.Second
 	params := &IterChParams{
 		SendTimeout: &timeout,
 	}
@@ -139,6 +139,11 @@ func TestCustomIterCh(t *testing.T) {
 		}
 	} else {
 		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
+	}
+
+	// nil bounds method check
+	if params.Bounds() != nil {
+		t.Fatalf("TestCustomIterCh failed: %v", "bounds method returned a non-nil value")
 	}
 
 	params = &IterChParams{
