@@ -4,7 +4,7 @@ import "time"
 
 type IterChParams struct{
 	Reversed bool
-	SendTimeout *time.Duration
+	SendTimeout time.Duration
 	BufSize int
 	LowerBound,
 	UpperBound interface{}
@@ -23,23 +23,25 @@ func setBufSize(bufSize int) int {
 	return bufSize
 }
 
-func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout *time.Duration, i int) bool {
+func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout time.Duration, i int) bool {
 	rec := Record{}
 
 	rec.Key = sm.sorted[i]
 	rec.Val = sm.idx[rec.Key]
 
-	if sendTimeout == nil {
+	if sendTimeout == time.Duration(0) {
 		ch <- rec
 		return true
-	} else {
-		select {
-		case ch <- rec:
-			return true
-		case <-time.After(*sendTimeout):
-			break
-		}
 	}
+
+	select {
+	case ch <- rec:
+		return true
+
+	case <-time.After(sendTimeout):
+		break
+	}
+
 	return false
 }
 
@@ -58,8 +60,8 @@ func (sm *SortedMap) parseChBoundParams(params *IterChParams) *IterChParams {
 		localParams.Reversed = params.Reversed
 		localParams.SendTimeout = params.SendTimeout
 		localParams.BufSize = params.BufSize
-	
-		iterBounds := sm.rangeIdxSearch(params.LowerBound, params.UpperBound)
+
+		iterBounds := sm.boundsIdxSearch(params.LowerBound, params.UpperBound)
 		if len(iterBounds) >= 2 {
 			localParams.LowerBound = iterBounds[0]
 			localParams.UpperBound = iterBounds[1]
@@ -128,7 +130,7 @@ func (sm *SortedMap) iterCh(params *IterChParams) (<-chan Record, bool) {
 }
 
 func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec *Record) bool) {
-	iterBounds := sm.rangeIdxSearch(lowerBound, upperBound)
+	iterBounds := sm.boundsIdxSearch(lowerBound, upperBound)
 	if len(iterBounds) < 2 {
 		if reversed {
 			for i := len(sm.sorted) - 1; i > 0; i-- {

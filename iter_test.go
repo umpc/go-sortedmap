@@ -27,9 +27,8 @@ func TestIterChTimeout(t *testing.T) {
 		t.Fatal(err)
 	}
 	timeout := 1 * time.Microsecond
-	params := &IterChParams{
-		SendTimeout: &timeout,
-	}
+	params := &IterChParams{SendTimeout: timeout}
+
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
 			time.Sleep(5 * time.Microsecond)
@@ -59,7 +58,7 @@ func TestIterChTimeout(t *testing.T) {
 
 	params = &IterChParams{
 		Reversed: true,
-		SendTimeout: &timeout,
+		SendTimeout: timeout,
 	}
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {

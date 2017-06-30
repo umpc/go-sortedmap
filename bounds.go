@@ -2,7 +2,7 @@ package sortedmap
 
 import "sort"
 
-func (sm *SortedMap) rangeIdxSearch(lowerBound, upperBound interface{}) []int {
+func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 
 	if lowerBound == nil || upperBound == nil {
 		return nil

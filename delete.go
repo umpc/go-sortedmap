@@ -28,7 +28,7 @@ func (sm *SortedMap) delete(key interface{}) bool {
 }
 
 func (sm *SortedMap) deleteRange(lowerBound, upperBound interface{}) bool {
-	iterBounds := sm.rangeIdxSearch(lowerBound, upperBound)
+	iterBounds := sm.boundsIdxSearch(lowerBound, upperBound)
 	if len(iterBounds) < 2 {
 		return false
 	}
