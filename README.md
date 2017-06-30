@@ -49,12 +49,14 @@ func main() {
   // Insert the example records:
   sm.BatchInsert(records)
 
-  // Loop through records, in order, from the lowest possible value, until reaching the given upper bound:
+  // Loop through records, in order, from the lowest possible value,
+  // until reaching the given upper bound:
   for rec := range sm.BoundedIterCh(false, time.Time{}, time.Now()) {
     fmt.Printf("%+v\n", rec)
   }
 
-  // Check out the docs and the test files, for more functionality, and further explainations.
+  // Check out the docs and the test files, for more functionality,
+  // and further explainations.
 }
 
 func randRecords(n int) []*sortedmap.Record {
