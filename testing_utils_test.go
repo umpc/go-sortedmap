@@ -80,7 +80,7 @@ func verifyRecords(ch <-chan Record, reverse bool) error {
 
 func newSortedMapFromRandRecords(n int) (*SortedMap, []*Record, error) {
 	records := randRecords(n)
-	sm := New(asc.Time)
+	sm := New(0, asc.Time)
 	sm.BatchReplace(records)
 
 	return sm, records, verifyRecords(sm.IterCh(), false)

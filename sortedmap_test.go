@@ -10,7 +10,7 @@ const (
 )
 
 func TestNew(t *testing.T) {
-	sm := New(nil)
+	sm := New(0, nil)
 
 	if sm.idx == nil {
 		t.Fatal("TestNew failed: idx was nil!")
@@ -23,9 +23,9 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestFalseLessFunc(t *testing.T) {
-	if New(nil).lessFn(nil, nil) {
-		t.Fatal("TestFalseLessFunc failed: lessFn returned true!")
+func TestUnsortedLessFunc(t *testing.T) {
+	if New(0, nil).lessFn(nil, nil) {
+		t.Fatal("TestUnsortedLessFunc failed: lessFn returned true!")
 	}
 }
 

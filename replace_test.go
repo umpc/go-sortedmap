@@ -8,7 +8,7 @@ import (
 
 func TestReplace(t *testing.T) {
 	records := randRecords(3)
-	sm := New(asc.Time)
+	sm := New(0, asc.Time)
 
 	for i := 0; i < 5; i++ {
 		for _, rec := range records {

@@ -8,7 +8,7 @@ import (
 
 func TestInsert(t *testing.T) {
 	records := randRecords(3)
-	sm := New(asc.Time)
+	sm := New(0, asc.Time)
 
 	for i := range records {
 		if !sm.Insert(records[i].Key, records[i].Val) {
@@ -31,7 +31,7 @@ func TestInsert(t *testing.T) {
 
 func TestBatchInsert(t *testing.T) {
 	records := randRecords(1000)
-	sm := New(asc.Time)
+	sm := New(0, asc.Time)
 
 	for _, ok := range sm.BatchInsert(records) {
 		if !ok {

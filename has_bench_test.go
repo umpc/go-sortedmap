@@ -40,6 +40,18 @@ func batchHasNofNRecords(b *testing.B, n int) {
 	}
 }
 
+func BenchmarkHas1of1CachedRecords(b *testing.B) {
+	sm, _, keys, err := newRandSortedMapWithKeys(1)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sm.Has(keys[0])
+	}
+}
+
 func BenchmarkHas1of1Records(b *testing.B) {
 	has1ofNRecords(b, 1)
 }

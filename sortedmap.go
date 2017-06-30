@@ -17,17 +17,24 @@ type Record struct {
 // SortLessFunc defines the type of the comparison function for the chosen value type.
 type SortLessFunc func(i, j interface{}) bool
 
-// New creates and initializes a new SortedMap structure and returns a reference to it.
-func New(lessFn SortLessFunc) *SortedMap {
+func unsortedSortLessFunc(_, _ interface{}) bool {
+	return false
+}
+
+func setLessFunc(lessFn SortLessFunc) SortLessFunc {
 	if lessFn == nil {
-		lessFn = func(_, _ interface{}) bool {
-			return false
-		}
+		return unsortedSortLessFunc
 	}
+	return lessFn
+}
+
+// New creates and initializes a new SortedMap structure and then returns a reference to it.
+// New SortedMaps are created with a backing map/slice of length/capacity n.
+func New(n int, lessFn SortLessFunc) *SortedMap {
 	return &SortedMap{
-		idx:    make(map[interface{}]interface{}),
-		sorted: make([]interface{}, 0),
-		lessFn: lessFn,
+		idx:    make(map[interface{}]interface{}, n),
+		sorted: make([]interface{}, 0, n),
+		lessFn: setLessFunc(lessFn),
 	}
 }
 
