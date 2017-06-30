@@ -58,21 +58,15 @@ func TestDeleteBetween(t *testing.T) {
 
 	earlierDate := time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	if !sm.DeleteBetween(nil, nil) {
+	if sm.DeleteBetween(nil, nil) {
 		t.Fatalf("TestDeleteBetween failed: %v", generalBoundsErr)
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
-		t.Fatal(err)
-	}
 
-	if !sm.DeleteBetween(nil, time.Now()) {
+	if sm.DeleteBetween(nil, time.Now()) {
 		t.Fatalf("TestDeleteBetween failed: %v", generalBoundsErr)
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
-		t.Fatal(err)
-	}
 
-	if !sm.DeleteBetween(time.Now(), nil) {
+	if sm.DeleteBetween(time.Now(), nil) {
 		t.Fatalf("TestDeleteBetween failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
