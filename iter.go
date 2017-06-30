@@ -97,7 +97,7 @@ func (params *IterChParams) bounds() []int {
 	}
 }
 
-func (sm *SortedMap) iterCh(params *IterChParams) (<-chan Record, bool) {
+func (sm *SortedMap) iterCh(params *IterChParams) <-chan Record {
 
 	localParams := sm.parseChBoundParams(params)
 	ch := make(chan Record, setBufSize(localParams.BufSize))
@@ -135,7 +135,7 @@ func (sm *SortedMap) iterCh(params *IterChParams) (<-chan Record, bool) {
 		close(ch)
 	}(localParams, ch)
 
-	return ch, true
+	return ch
 }
 
 func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec *Record) bool) {
@@ -172,16 +172,14 @@ func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{},
 // IterCh returns a channel that sorted records can be read from and processed.
 // This method defaults to the expected behavior of blocking until a read, with no timeout.
 func (sm *SortedMap) IterCh() <-chan Record {
-	rec, _ := sm.iterCh(nil)
-	return rec
+	return sm.iterCh(nil)
 }
 
-// BoundedIterCh returns a channel that sorted records can be read from and processed,
-// and a boolean value that indicates whether or not values in the collection fall between the given bounds.
+// BoundedIterCh returns a channel that sorted records can be read from and processed.
 // BoundedIterCh starts at the lower bound value and sends all values in the collection until reaching the upper bounds value.
 // Sort order is reversed if the reversed argument is set to true.
 // This method defaults to the expected behavior of blocking until a channel send completes, with no timeout.
-func (sm *SortedMap) BoundedIterCh(reversed bool, lowerBound, upperBound interface{}) (<-chan Record, bool) {
+func (sm *SortedMap) BoundedIterCh(reversed bool, lowerBound, upperBound interface{}) <-chan Record {
 	return sm.iterCh(&IterChParams{
 		Reversed: reversed,
 		LowerBound: lowerBound,
@@ -189,12 +187,11 @@ func (sm *SortedMap) BoundedIterCh(reversed bool, lowerBound, upperBound interfa
 	})
 }
 
-// CustomIterCh returns a channel that sorted records can be read from and processed,
-// and a boolean value that indicates whether or not values in the collection fall between the given bounds.
+// CustomIterCh returns a channel that sorted records can be read from and processed.
 // CustomIterCh starts at the lower bound value and sends all values in the collection until reaching the upper bounds value.
 // Sort order is reversed if the reversed argument is set to true.
 // This method defaults to the expected behavior of blocking until a channel send completes, with no timeout.
-func (sm *SortedMap) CustomIterCh(params *IterChParams) (<-chan Record, bool) {
+func (sm *SortedMap) CustomIterCh(params *IterChParams) <-chan Record {
 	return sm.iterCh(params)
 }
 
