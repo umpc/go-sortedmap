@@ -36,7 +36,6 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 		upperBoundIdx = sm.setBoundIdx(upperBound)
 	}
 
-<<<<<<< HEAD
 	if lowerBound != nil && upperBound != nil {
 		if lowerBoundIdx == upperBoundIdx {
 			valFromIdx := sm.idx[sm.sorted[lowerBoundIdx]]
@@ -45,18 +44,11 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 				if sm.lessFn(upperBound, valFromIdx) {
 					return nil
 				}
-=======
-	if lowerBoundIdx == upperBoundIdx {
-		valFromIdx := sm.idx[sm.sorted[lowerBoundIdx]]
-		if sm.lessFn(lowerBound, valFromIdx) {
-			if sm.lessFn(upperBound, valFromIdx) {
-				return nil
->>>>>>> parent of 17c7ac5... Add missing nil check to the bounds index search method
 			}
-		}
-		if !sm.lessFn(lowerBound, valFromIdx) {
-			if !sm.lessFn(upperBound, valFromIdx) {
-				return nil
+			if !sm.lessFn(lowerBound, valFromIdx) {
+				if !sm.lessFn(upperBound, valFromIdx) {
+					return nil
+				}
 			}
 		}
 	}
