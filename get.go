@@ -17,3 +17,15 @@ func (sm *SortedMap) BatchGet(keys []interface{}) ([]interface{}, []bool) {
 
 	return vals, results
 }
+
+// GetMap returns a map containing keys mapped to values.
+// The returned map is valid until the next modification to the SortedMap structure.
+func (sm *SortedMap) GetMap() map[interface{}]interface{} {
+	return sm.idx
+}
+
+// GetKeys returns a slice containing sorted keys.
+// The returned slice is valid until the next modification to the SortedMap structure.
+func (sm *SortedMap) GetKeys() []interface{} {
+	return sm.sorted
+}

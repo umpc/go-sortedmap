@@ -24,3 +24,15 @@ func (sm *SortedMap) BatchInsert(recs []*Record) []bool {
 	}
 	return results
 }
+
+// BatchInsertMap adds all map keys and values to the collection and returns a slice containing each record's insert status.
+// If a key already exists, the value will not be inserted. Use BatchReplaceMap for the alternative functionality.	
+func (sm *SortedMap) BatchInsertMap(m map[interface{}]interface{}) []bool {
+	results := make([]bool, len(m))
+	i := 0
+	for key, val := range m {
+		results[i] = sm.insert(key, val)
+		i++
+	}
+	return results
+}
