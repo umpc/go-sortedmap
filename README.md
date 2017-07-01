@@ -51,8 +51,17 @@ func main() {
 
   // Loop through records, in order, from the lowest possible value,
   // until reaching the given upper bound:
-  for rec := range sm.BoundedIterCh(false, time.Time{}, time.Now()) {
+  if ch, ok := sm.BoundedIterCh(false, time.Time{}, time.Now()); ok {
+    for rec := range ch {
+      fmt.Printf("%+v\n", rec)
+    }
+  }
+
+  if ok := sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec Record) bool {
     fmt.Printf("%+v\n", rec)
+    return true
+  }); !ok {
+    // No values, within the bounds, were found.
   }
 
   // Check out the docs and the test files, for more functionality,
