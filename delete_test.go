@@ -56,7 +56,7 @@ func TestBoundedDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	earlierDate := time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
+	earlierDate := time.Date(200, 1, 1, 0, 0, 0, 0, time.UTC)
 
 	if !sm.BoundedDelete(nil, nil) {
 		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
