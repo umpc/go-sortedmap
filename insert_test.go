@@ -7,8 +7,9 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	records := randRecords(3)
-	sm := New(0, asc.Time)
+	const n = 3
+	records := randRecords(n)
+	sm := New(n, asc.Time)
 
 	for i := range records {
 		if !sm.Insert(records[i].Key, records[i].Val) {
@@ -30,8 +31,9 @@ func TestInsert(t *testing.T) {
 }
 
 func TestBatchInsert(t *testing.T) {
-	records := randRecords(1000)
-	sm := New(0, asc.Time)
+	const n = 1000
+	records := randRecords(n)
+	sm := New(n, asc.Time)
 
 	for _, ok := range sm.BatchInsert(records) {
 		if !ok {
@@ -39,6 +41,48 @@ func TestBatchInsert(t *testing.T) {
 		}
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestBatchInsertMapWithInterfaceKeys(t *testing.T) {
+	const n = 1000
+	records := randRecords(n)
+	sm := New(n, asc.Time)
+
+	i := 0
+	m := make(map[interface{}]interface{}, n)
+
+	for _, rec := range records {
+		m[rec.Key] = rec.Val
+		i++
+	}
+	if i == 0 {
+		t.Fatal("Records were not copied to the map.")
+	}
+
+	if err := sm.BatchInsertMap(m); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestBatchInsertMapWithStringKeys(t *testing.T) {
+	const n = 1000
+	records := randRecords(n)
+	sm := New(n, asc.Time)
+
+	i := 0
+	m := make(map[string]interface{}, n)
+
+	for _, rec := range records {
+		m[rec.Key.(string)] = rec.Val
+		i++
+	}
+	if i == 0 {
+		t.Fatal("Records were not copied to the map.")
+	}
+
+	if err := sm.BatchInsertMap(m); err != nil {
 		t.Fatal(err)
 	}
 }

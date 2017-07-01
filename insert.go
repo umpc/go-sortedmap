@@ -1,5 +1,7 @@
 package sortedmap
 
+import "fmt"
+
 func (sm *SortedMap) insert(key, val interface{}) bool {
 	if _, ok := sm.idx[key]; !ok {
 		sm.idx[key] = val
@@ -25,27 +27,41 @@ func (sm *SortedMap) BatchInsert(recs []*Record) []bool {
 	return results
 }
 
+func (sm *SortedMap) batchInsertMapWithInterfaceKeys(v interface{}) error {
+	m := v.(map[interface{}]interface{})
+
+	for key, val := range m {
+		if !sm.insert(key, val) {
+			return fmt.Errorf("Key already exists: %v", key)
+		}
+	}
+	return nil
+}
+
+func (sm *SortedMap) batchInsertMapWithStringKeys(v interface{}) error {
+	m := v.(map[string]interface{})
+
+	for key, val := range m {
+		if !sm.insert(key, val) {
+			return fmt.Errorf("Key already exists: %v", key)
+		}
+	}
+	return nil
+}
+
 // BatchInsertMap adds all map keys and values to the collection and returns a slice containing each record's insert status.
 // If a key already exists, the value will not be inserted. Use BatchReplaceMap for the alternative functionality.	
-func (sm *SortedMap) BatchInsertMap(v interface{}) []bool {
-	switch m := v.(type) {
+func (sm *SortedMap) BatchInsertMap(v interface{}) error {
+	const unsupportedTypeErr = "Unsupported type."
+
+	switch v.(type) {
 	case map[interface{}]interface{}:
-		results := make([]bool, len(m))
-		i := 0
-		for key, val := range m {
-			results[i] = sm.insert(key, val)
-			i++
-		}
-		return results
+		return sm.batchInsertMapWithInterfaceKeys(v)
 
 	case map[string]interface{}:
-		results := make([]bool, len(m))
-		i := 0
-		for key, val := range m {
-			results[i] = sm.insert(key, val)
-			i++
-		}
-		return results
+		return sm.batchInsertMapWithStringKeys(v)
+
+	default:
+		return fmt.Errorf("%s", unsupportedTypeErr)
 	}
-	return []bool{false}
 }

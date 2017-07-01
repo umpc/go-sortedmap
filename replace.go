@@ -1,5 +1,7 @@
 package sortedmap
 
+import "fmt"
+
 func (sm *SortedMap) replace(key, val interface{}) {
 	sm.delete(key)
 	sm.insert(key, val)
@@ -19,21 +21,36 @@ func (sm *SortedMap) BatchReplace(recs []*Record) {
 	}
 }
 
+func (sm *SortedMap) batchReplaceMapWithInterfaceKeys(v interface{}) error {
+	m := v.(map[interface{}]interface{})
+
+	for key, val := range m {
+		sm.replace(key, val)
+	}
+	return nil
+}
+
+func (sm *SortedMap) batchReplaceMapWithStringKeys(v interface{}) error {
+	m := v.(map[string]interface{})
+
+	for key, val := range m {
+		sm.replace(key, val)
+	}
+	return nil
+}
+
 // BatchReplaceMap adds all map keys and values to the collection.
 // Even if a key already exists, the value will be inserted. Use BatchInsertMap for the alternative functionality.	
-func (sm *SortedMap) BatchReplaceMap(v interface{}) bool {
-	switch m := v.(type) {
+func (sm *SortedMap) BatchReplaceMap(v interface{}) error {
+	const unsupportedTypeErr = "Unsupported type."
+
+	switch v.(type) {
 	case map[interface{}]interface{}:
-		for key, val := range m {
-			sm.replace(key, val)
-		}
-		return true
+		return sm.batchReplaceMapWithInterfaceKeys(v)
 
 	case map[string]interface{}:
-		for key, val := range m {
-			sm.replace(key, val)
-		}
-		return true
+		return sm.batchReplaceMapWithStringKeys(v)
 	}
-	return false
+
+	return fmt.Errorf("%s", unsupportedTypeErr)
 }
