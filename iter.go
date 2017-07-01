@@ -31,11 +31,10 @@ func setBufSize(bufSize int) int {
 
 func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout time.Duration, i int) bool {
 	rec := Record{}
-
 	rec.Key = sm.sorted[i]
 	rec.Val = sm.idx[rec.Key]
 
-	if sendTimeout == time.Duration(0) {
+	if sendTimeout <= time.Duration(0) {
 		ch <- rec
 		return true
 	}
@@ -58,54 +57,26 @@ func (sm *SortedMap) returnRecord(i int) *Record {
 	return rec
 }
 
-// parseChBoundParams returns a new reference to default parameters
-// if no parameters reference was passed into the method.
-func (sm *SortedMap) parseChBoundParams(params *IterChParams) *IterChParams {
-	localParams := new(IterChParams)
+func (sm *SortedMap) iterCh(params IterChParams) <-chan Record {
+	ch := make(chan Record, setBufSize(params.BufSize))
 
-	if params != nil {
-		localParams.Reversed = params.Reversed
-		localParams.SendTimeout = params.SendTimeout
-		localParams.BufSize = params.BufSize
-
+	go func(params IterChParams, ch chan Record) {
 		iterBounds := sm.boundsIdxSearch(params.LowerBound, params.UpperBound)
-		if len(iterBounds) >= 2 {
-			localParams.LowerBound = iterBounds[0]
-			localParams.UpperBound = iterBounds[1]
-		}
-	}
-
-	return localParams
-}
-
-// (*IterChParams).bounds returns a slice containing the lower and upper bound indexes
-// after being obtained and set using (*SortedMap).boundsIdxSearch
-func (params *IterChParams) bounds() []int {
-	switch params.LowerBound.(type) {
-	case int:
-	default:
-		return nil
-	}
-	switch params.UpperBound.(type) {
-	case int:
-	default:
-		return nil
-	}
-	return []int{
-		params.LowerBound.(int),
-		params.UpperBound.(int),
-	}
-}
-
-func (sm *SortedMap) iterCh(params *IterChParams) <-chan Record {
-
-	localParams := sm.parseChBoundParams(params)
-	ch := make(chan Record, setBufSize(localParams.BufSize))
-
-	go func(params *IterChParams, ch chan Record) {
-		if params.LowerBound != nil && params.UpperBound != nil {
-			iterBounds := params.bounds()
-
+		if len(iterBounds) < 2 {
+			if params.Reversed {
+				for i := len(sm.sorted) - 1; i > 0; i-- {
+					if !sm.sendRecord(ch, params.SendTimeout, i) {
+						break
+					}
+				}
+			} else {
+				for i := range sm.sorted {
+					if !sm.sendRecord(ch, params.SendTimeout, i) {
+						break
+					}
+				}
+			}
+		} else {
 			if params.Reversed {
 				for i := iterBounds[1]; i > iterBounds[0]; i-- {
 					if !sm.sendRecord(ch, params.SendTimeout, i) {
@@ -119,21 +90,9 @@ func (sm *SortedMap) iterCh(params *IterChParams) <-chan Record {
 					}
 				}
 			}
-		} else if params.Reversed {
-			for i := len(sm.sorted) - 1; i > 0; i-- {
-				if !sm.sendRecord(ch, params.SendTimeout, i) {
-					break
-				}
-			}
-		} else {
-			for i := range sm.sorted {
-				if !sm.sendRecord(ch, params.SendTimeout, i) {
-					break
-				}
-			}
 		}
 		close(ch)
-	}(localParams, ch)
+	}(params, ch)
 
 	return ch
 }
@@ -154,16 +113,18 @@ func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{},
 				}
 			}
 		}
-	} else if reversed {
-		for i := iterBounds[1]; i > iterBounds[0]; i-- {
-			if !f(sm.returnRecord(i)) {
-				break
-			}
-		}
 	} else {
-		for i := iterBounds[0]; i < iterBounds[1]; i++ {
-			if !f(sm.returnRecord(i)) {
-				break
+		if reversed {
+			for i := iterBounds[1]; i > iterBounds[0]; i-- {
+				if !f(sm.returnRecord(i)) {
+					break
+				}
+			}
+		} else {
+			for i := iterBounds[0]; i < iterBounds[1]; i++ {
+				if !f(sm.returnRecord(i)) {
+					break
+				}
 			}
 		}
 	}
@@ -172,7 +133,7 @@ func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{},
 // IterCh returns a channel that sorted records can be read from and processed.
 // This method defaults to the expected behavior of blocking until a read, with no timeout.
 func (sm *SortedMap) IterCh() <-chan Record {
-	return sm.iterCh(nil)
+	return sm.iterCh(IterChParams{})
 }
 
 // BoundedIterCh returns a channel that sorted records can be read from and processed.
@@ -180,7 +141,7 @@ func (sm *SortedMap) IterCh() <-chan Record {
 // Sort order is reversed if the reversed argument is set to true.
 // This method defaults to the expected behavior of blocking until a channel send completes, with no timeout.
 func (sm *SortedMap) BoundedIterCh(reversed bool, lowerBound, upperBound interface{}) <-chan Record {
-	return sm.iterCh(&IterChParams{
+	return sm.iterCh(IterChParams{
 		Reversed: reversed,
 		LowerBound: lowerBound,
 		UpperBound: upperBound,
@@ -191,7 +152,7 @@ func (sm *SortedMap) BoundedIterCh(reversed bool, lowerBound, upperBound interfa
 // CustomIterCh starts at the lower bound value and sends all values in the collection until reaching the upper bounds value.
 // Sort order is reversed if the reversed argument is set to true.
 // This method defaults to the expected behavior of blocking until a channel send completes, with no timeout.
-func (sm *SortedMap) CustomIterCh(params *IterChParams) <-chan Record {
+func (sm *SortedMap) CustomIterCh(params IterChParams) <-chan Record {
 	return sm.iterCh(params)
 }
 

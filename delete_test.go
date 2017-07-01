@@ -58,15 +58,15 @@ func TestBoundedDelete(t *testing.T) {
 
 	earlierDate := time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	if sm.BoundedDelete(nil, nil) {
+	if !sm.BoundedDelete(nil, nil) {
 		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 
-	if sm.BoundedDelete(nil, time.Now()) {
+	if !sm.BoundedDelete(nil, time.Now()) {
 		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 
-	if sm.BoundedDelete(time.Now(), nil) {
+	if !sm.BoundedDelete(time.Now(), nil) {
 		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {
@@ -87,7 +87,7 @@ func TestBoundedDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !sm.BoundedDelete(earlierDate, earlierDate) {
+	if sm.BoundedDelete(earlierDate, earlierDate) {
 		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
 	}
 	if err := verifyRecords(sm.IterCh(), false); err != nil {

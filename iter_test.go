@@ -28,7 +28,7 @@ func TestIterChTimeout(t *testing.T) {
 	}
 	timeout := 1 * time.Microsecond
 	sleepDur := 10 * time.Millisecond
-	params := &IterChParams{SendTimeout: timeout}
+	params := IterChParams{SendTimeout: timeout}
 
 	ch := sm.CustomIterCh(params)
 	for i := 0; i < 5; i++ {
@@ -51,7 +51,7 @@ func TestIterChTimeout(t *testing.T) {
 		}
 	}
 
-	params = &IterChParams{
+	params = IterChParams{
 		Reversed: true,
 		SendTimeout: timeout,
 	}
@@ -74,26 +74,6 @@ func TestIterChTimeout(t *testing.T) {
 		if i > 1 && rec.Key != nil {
 			t.Fatalf("TestCustomIterCh failed: %v: %v", nonNilValErr, rec.Key)
 		}
-	}
-}
-
-func TestIterChParamsBounds(t *testing.T) {
-	params := new(IterChParams)
-	if params.bounds() != nil {
-		t.Fatalf("TestIterChParamsBounds failed: %v", nonNilValErr)
-	}
-	params.LowerBound = 0
-	if params.bounds() != nil {
-		t.Fatalf("TestIterChParamsBounds failed: %v", nonNilValErr)
-	}
-	params = new(IterChParams)
-	params.UpperBound = 0
-	if params.bounds() != nil {
-		t.Fatalf("TestIterChParamsBounds failed: %v", nonNilValErr)
-	}
-	params.LowerBound = 0
-	if params.bounds() == nil {
-		t.Fatalf("TestIterChParamsBounds failed: %v", nilValErr)
 	}
 }
 
@@ -152,7 +132,7 @@ func TestCustomIterCh(t *testing.T) {
 	earlierDate := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 	laterDate := time.Now()
 
-	params := &IterChParams{
+	params := IterChParams{
 		Reversed: reversed,
 		BufSize: buffSize,
 	}
@@ -160,7 +140,7 @@ func TestCustomIterCh(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	params = &IterChParams{
+	params = IterChParams{
 		Reversed: reversed,
 		BufSize: buffSize,
 		LowerBound: earlierDate,
@@ -170,7 +150,7 @@ func TestCustomIterCh(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	params = &IterChParams{
+	params = IterChParams{
 		Reversed: reversed,
 		BufSize: buffSize,
 		LowerBound: laterDate,
@@ -181,7 +161,7 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	reversed = false
-	params = &IterChParams{
+	params = IterChParams{
 		Reversed: reversed,
 		BufSize: 0,
 		LowerBound: laterDate,
