@@ -2,15 +2,17 @@ package sortedmap
 
 import "sort"
 
-func (sm *SortedMap) setBoundIdx(bound interface{}) int {
+func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 	idx := 0
-	if bound == nil {
+	if boundVal == nil {
 		return idx
 	}
+
 	smLen := len(sm.sorted)
 	idx = sort.Search(smLen, func(i int) bool {
-		return sm.lessFn(bound, sm.idx[sm.sorted[i]])
+		return sm.lessFn(boundVal, sm.idx[sm.sorted[i]])
 	})
+
 	// sort.Search returns the smallest index i in [0, n) at which f(i) is true.
 	// This sets the correct index for less than conditional comparisons.
 	if idx > 0 {
@@ -18,8 +20,10 @@ func (sm *SortedMap) setBoundIdx(bound interface{}) int {
 	}
 	valFromIdx := sm.idx[sm.sorted[idx]]
 
-	if idx < smLen - 1 && valFromIdx != bound {
-		if !sm.lessFn(bound, valFromIdx) {
+	// If the bound value is greater than the value from the map,
+	// select the next index value.
+	if idx < smLen - 1 {
+		if !sm.lessFn(boundVal, valFromIdx) {
 			idx++
 		}
 	}

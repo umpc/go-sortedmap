@@ -19,7 +19,8 @@ func randStr(n int) string {
 	for i := 0; i < n; i++ {
 		result[i] = chars[mrand.Intn(len(chars))]
 	}
-    return string(result)
+
+	return string(result)
 }
 
 func randRecord() Record {
