@@ -51,15 +51,23 @@ func main() {
       fmt.Printf("%+v\n", rec)
     }
   }
-
-  fmt.Println("") // Separate the two identical lists so that they do not appear to be unsorted.
+  fmt.Println("")
  
-  if ok := sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
+  if ok := sm.BoundedIterFunc(true, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
     fmt.Printf("%+v\n", rec)
     return true
   }); !ok {
     // No values, within the bounds, were found.
   }
+  fmt.Println("")
+
+  m, keys := sm.GetMap(), sm.GetKeys()
+  for _, k := range keys {
+    fmt.Printf("%+v\n", m[k])
+  }
+  fmt.Println("")
+
+  
 
   // Check out the docs and the test files, for more functionality,
   // and further explainations.

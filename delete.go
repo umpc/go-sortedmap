@@ -29,7 +29,7 @@ func (sm *SortedMap) delete(key interface{}) bool {
 
 func (sm *SortedMap) boundedDelete(lowerBound, upperBound interface{}) bool {
 	iterBounds := sm.boundsIdxSearch(lowerBound, upperBound)
-	if len(iterBounds) < 2 {
+	if iterBounds == nil {
 		return false
 	}
 	for i := iterBounds[0]; i < iterBounds[1] - i; i++ {

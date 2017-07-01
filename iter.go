@@ -56,9 +56,10 @@ func (sm *SortedMap) sendRecord(ch chan Record, sendTimeout time.Duration, i int
 func (sm *SortedMap) iterCh(params IterChParams) (<-chan Record, bool) {
 
 	iterBounds := sm.boundsIdxSearch(params.LowerBound, params.UpperBound)
-	if len(iterBounds) < 2 {
+	if iterBounds == nil {
 		return nil, false
 	}
+
 	ch := make(chan Record, setBufSize(params.BufSize))
 
 	go func(params IterChParams, ch chan Record) {
@@ -84,7 +85,7 @@ func (sm *SortedMap) iterCh(params IterChParams) (<-chan Record, bool) {
 func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{}, f IterCallbackFunc) bool {
 
 	iterBounds := sm.boundsIdxSearch(lowerBound, upperBound)
-	if len(iterBounds) < 2 {
+	if iterBounds == nil {
 		return false
 	}
 
