@@ -41,7 +41,9 @@ func TestBatchReplaceMapWithInterfaceKeys(t *testing.T) {
 	if i == 0 {
 		t.Fatal("Records were not copied to the map.")
 	}
-	sm.BatchReplaceMap(m)
+	if err := sm.BatchReplaceMap(m); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestBatchReplaceMapWithStringKeys(t *testing.T) {
@@ -58,5 +60,13 @@ func TestBatchReplaceMapWithStringKeys(t *testing.T) {
 	if i == 0 {
 		t.Fatal("Records were not copied to the map.")
 	}
-	sm.BatchReplaceMap(m)
+	if err := sm.BatchReplaceMap(m); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestBatchReplaceMapWithNilType(t *testing.T) {
+	if err := New(0, asc.Time).BatchReplaceMap(nil); err == nil {
+		t.Fatal("a nil type was allowed where a supported map type is required.")
+	}
 }
