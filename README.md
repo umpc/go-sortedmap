@@ -57,7 +57,7 @@ func main() {
     }
   }
 
-  if ok := sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec Record) bool {
+  if ok := sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
     fmt.Printf("%+v\n", rec)
     return true
   }); !ok {

@@ -15,9 +15,6 @@ type IterChParams struct{
 	UpperBound interface{}
 }
 
-// IterCallbackFunc defines the type of function that is passed into an IterFunc method and its single argument, which is a reference to a record value.
-type IterCallbackFunc func(rec Record) bool
-
 func setBufSize(bufSize int) int {
 	// initialBufSize must be >= 1 or a blocked channel send goroutine may not exit.
 	// More info: https://github.com/golang/go/wiki/Timeouts
@@ -80,7 +77,7 @@ func (sm *SortedMap) iterCh(params IterChParams) (<-chan Record, bool) {
 	return ch, true
 }
 
-func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{}, f IterCallbackFunc) bool {
+func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec Record) bool) bool {
 
 	iterBounds := sm.boundsIdxSearch(lowerBound, upperBound)
 	if len(iterBounds) < 2 {
@@ -132,12 +129,12 @@ func (sm *SortedMap) CustomIterCh(params IterChParams) (<-chan Record, bool) {
 
 // IterFunc passes each record to the specified callback function.
 // Sort order is reversed if the reversed argument is set to true.
-func (sm *SortedMap) IterFunc(reversed bool, f IterCallbackFunc) bool {
+func (sm *SortedMap) IterFunc(reversed bool, f func(rec Record) bool) bool {
 	return sm.iterFunc(reversed, nil, nil, f)
 }
 
 // BoundedIterFunc starts at the lower bound value and passes all values in the collection to the callback function until reaching the upper bounds value.
 // Sort order is reversed if the reversed argument is set to true.
-func (sm *SortedMap) BoundedIterFunc(reversed bool, lowerBound, upperBound interface{}, f IterCallbackFunc) bool {
+func (sm *SortedMap) BoundedIterFunc(reversed bool, lowerBound, upperBound interface{}, f func(rec Record) bool) bool {
 	return sm.iterFunc(reversed, lowerBound, upperBound, f)
 }
