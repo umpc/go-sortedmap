@@ -15,7 +15,7 @@ func (sm *SortedMap) delete(key interface{}) bool {
 		} else if i < smLen - 1 {
 			i++
 		}
-		for i > 0 && sm.sorted[i] != key {
+		for sm.sorted[i] != key {
 			i--
 		}
 
@@ -32,7 +32,7 @@ func (sm *SortedMap) boundedDelete(lowerBound, upperBound interface{}) bool {
 	if len(iterBounds) < 2 {
 		return false
 	}
-	for i := iterBounds[0]; i < iterBounds[1]; i++ {
+	for i := iterBounds[0]; i < iterBounds[1] - i; i++ {
 		delete(sm.idx, sm.sorted[i])
 		sm.sorted = deleteInterface(sm.sorted, i)
 	}
