@@ -41,11 +41,6 @@ func main() {
   // Create a new collection:
   sm := sortedmap.New(n, asc.Time)
 
-  // The value of n sets the initial backing slice capacity to reduce allocations.
-  // Inserting n + 1 values will cause an allocation of a new backing slice.
-  // Ascending-order sort for time.Time values has been selected for this example.
-  // More sort conditional functions are available in this package's subdirectories.
-
   // Insert the example records:
   sm.BatchInsert(records)
 
@@ -57,6 +52,8 @@ func main() {
     }
   }
 
+  fmt.Println("") // Separate the two identical lists so that they do not appear to be unsorted.
+ 
   if ok := sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
     fmt.Printf("%+v\n", rec)
     return true
