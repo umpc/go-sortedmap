@@ -64,13 +64,13 @@ func (sm *SortedMap) iterCh(params IterChParams) (<-chan Record, bool) {
 
 	go func(params IterChParams, ch chan Record) {
 		if params.Reversed {
-			for i := iterBounds[1]; i > iterBounds[0]; i-- {
+			for i := iterBounds[1]; i >= iterBounds[0]; i-- {
 				if !sm.sendRecord(ch, params.SendTimeout, i) {
 					break
 				}
 			}
 		} else {
-			for i := iterBounds[0]; i < iterBounds[1]; i++ {
+			for i := iterBounds[0]; i <= iterBounds[1]; i++ {
 				if !sm.sendRecord(ch, params.SendTimeout, i) {
 					break
 				}
@@ -90,13 +90,13 @@ func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{},
 	}
 
 	if reversed {
-		for i := iterBounds[1]; i > iterBounds[0]; i-- {
+		for i := iterBounds[1]; i >= iterBounds[0]; i-- {
 			if !f(sm.recordFromIdx(i)) {
 				break
 			}
 		}
 	} else {
-		for i := iterBounds[0]; i < iterBounds[1]; i++ {
+		for i := iterBounds[0]; i <= iterBounds[1]; i++ {
 			if !f(sm.recordFromIdx(i)) {
 				break
 			}
@@ -135,8 +135,8 @@ func (sm *SortedMap) CustomIterCh(params IterChParams) (<-chan Record, bool) {
 
 // IterFunc passes each record to the specified callback function.
 // Sort order is reversed if the reversed argument is set to true.
-func (sm *SortedMap) IterFunc(reversed bool, f IterCallbackFunc) bool {
-	return sm.iterFunc(reversed, nil, nil, f)
+func (sm *SortedMap) IterFunc(reversed bool, f IterCallbackFunc) {
+	sm.iterFunc(reversed, nil, nil, f)
 }
 
 // BoundedIterFunc starts at the lower bound value and passes all values in the collection to the callback function until reaching the upper bounds value.
