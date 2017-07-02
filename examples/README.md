@@ -289,7 +289,7 @@ func main() {
 
 ### Map & Keys Loop
 
-The Map and Keys methods offer a way of iterating throughout the map using a combination of Go's native map and slice types.
+The ```Map``` and ```Keys``` methods offer a way of iterating throughout the map using a combination of Go's native map and slice types.
 
 ```go
 package main
@@ -360,7 +360,7 @@ func main() {
 
 ### BoundedDelete
 
-```BoundedDelete``` is a similar pattern as the above 'Bounded' methods. ```BoundedDelete``` removes values that are equal to or between the provided bounds values.
+```BoundedDelete``` is a similar pattern as the above ```Bounded``` methods. ```BoundedDelete``` removes values that are equal to or between the provided bounds values.
 
 ```go
 package main
