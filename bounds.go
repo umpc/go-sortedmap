@@ -27,6 +27,7 @@ func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 			idx++
 		}
 	}
+
 	return idx
 }
 
