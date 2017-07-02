@@ -1,5 +1,19 @@
 # SortedMap Examples
 
+## Table of Contents
+
+* [Test Data](#test-data)
+* [Insert / Get / Replace / Delete / Has](#insert--get--replace--delete--has)
+* [Iteration](#iteration)
+  *  [IterCh](#iterch)
+  *  [BoundedIterCh](#boundediterch)
+  *  [CustomIterCh](#customiterch)
+  *  [IterFunc](#iterfunc)
+  *  [BoundedIterFunc](#boundediterfunc)
+  *  [Map & Keys Loop](#map--keys-loop)
+  *  [Map & Bounded Keys Loop](#map--bounded-keys-loop)
+  *  [Bounded Delete](#boundeddelete)
+
 ## Test Data
 
 The following function is used to generate test data in the examples:
