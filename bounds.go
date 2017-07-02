@@ -20,10 +20,10 @@ func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 	}
 	valFromIdx := sm.idx[sm.sorted[idx]]
 
-	// If the bound value is greater than the value from the map,
+	// If the bound value is greater than or equal to the value from the map,
 	// select the next index value.
 	if idx < smLen - 1 {
-		if !sm.lessFn(boundVal, valFromIdx) {
+		if sm.lessFn(valFromIdx, boundVal) {
 			idx++
 		}
 	}
@@ -45,15 +45,8 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 		if lowerBoundIdx == upperBoundIdx {
 			valFromIdx := sm.idx[sm.sorted[lowerBoundIdx]]
 
-			if sm.lessFn(lowerBound, valFromIdx) {
-				if sm.lessFn(upperBound, valFromIdx) {
-					return nil
-				}
-			}
-			if !sm.lessFn(lowerBound, valFromIdx) {
-				if !sm.lessFn(upperBound, valFromIdx) {
-					return nil
-				}
+			if !sm.lessFn(valFromIdx, lowerBound) && !sm.lessFn(upperBound, valFromIdx) {
+				return nil
 			}
 		}
 	}
