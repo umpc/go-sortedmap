@@ -358,9 +358,9 @@ func main() {
 }
 ```
 
-```BoundedDelete``` is a similar pattern as the above 'Bounded' methods. ```BoundedDelete``` removes values that are equal to or between the provided bounds values.
-
 ### BoundedDelete
+
+```BoundedDelete``` is a similar pattern as the above 'Bounded' methods. ```BoundedDelete``` removes values that are equal to or between the provided bounds values.
 
 ```go
 package main
