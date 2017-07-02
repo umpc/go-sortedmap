@@ -49,7 +49,7 @@ func main() {
   upperBound := time.Now()
 
   // Select values >= lowerBound and values <= upperBound.
-  // Loop through the values, in reverse order.
+  // Loop through the values, in reverse order:
   if ch, ok := sm.BoundedIterCh(reversed, lowerBound, upperBound); ok {
     for rec := range ch {
       fmt.Printf("%+v\n", rec)
