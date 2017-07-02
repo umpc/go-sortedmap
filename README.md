@@ -35,17 +35,17 @@ import (
 
 func main() {
   records := []*sortedmap.Record{
-	&sortedmap.Record{
-	    Key: "OpenBSD",
-	    Val: time.Date(1995, 10, 18, 8, 37, 1, 0, time.UTC),
+    &sortedmap.Record{
+      Key: "OpenBSD",
+      Val: time.Date(1995, 10, 18, 8, 37, 1, 0, time.UTC),
     },
     &sortedmap.Record{
-	    Key: "UnixTime",
-	    Val: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+      Key: "UnixTime",
+      Val: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
     },
     &sortedmap.Record{
-	    Key: "Linux",
-	    Val: time.Date(1991, 8, 25, 20, 57, 8, 0, time.UTC),
+      Key: "Linux",
+      Val: time.Date(1991, 8, 25, 20, 57, 8, 0, time.UTC),
     },
   }
 
