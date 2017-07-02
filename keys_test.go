@@ -49,7 +49,7 @@ func TestBoundedKeysWithNoBoundsReturned(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, ok := sm.BoundedKeys(time.Now().Add(-1 * time.Second), time.Now()); ok {
-		t.Fatal("Values fall between or are equal to the given bounds when it should not have returned bounds.")
+	if val, ok := sm.BoundedKeys(time.Now().Add(-1 * time.Microsecond), time.Now()); ok {
+		t.Fatalf("Values fall between or are equal to the given bounds when it should not have returned bounds: %+v", sm.idx[val[0]])
 	}
 }
