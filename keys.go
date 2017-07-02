@@ -15,7 +15,7 @@ func (sm *SortedMap) Keys() []interface{} {
 	return keys
 }
 
-// Keys returns a slice containing sorted keys.
+// BoundedKeys returns a slice containing sorted keys equal to or between the given bounds.
 // The returned slice is valid until the next modification to the SortedMap structure.
 func (sm *SortedMap) BoundedKeys(lowerBound, upperBound interface{}) ([]interface{}, bool) {
 	return sm.keys(lowerBound, upperBound)
