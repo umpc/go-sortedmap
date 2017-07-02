@@ -45,7 +45,12 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 		if lowerBoundIdx == upperBoundIdx {
 			valFromIdx := sm.idx[sm.sorted[lowerBoundIdx]]
 
-			if !sm.lessFn(valFromIdx, lowerBound) && !sm.lessFn(upperBound, valFromIdx) {
+			if !sm.lessFn(lowerBound, upperBound) && !sm.lessFn(upperBound, lowerBound) {
+				// lowerBound == upperBound
+				return nil
+			}
+
+			if sm.lessFn(valFromIdx, lowerBound) || sm.lessFn(upperBound, valFromIdx) {
 				return nil
 			}
 		}
