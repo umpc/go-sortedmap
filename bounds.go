@@ -3,13 +3,13 @@ package sortedmap
 import "sort"
 
 func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
-	idx := 0
+
 	if boundVal == nil {
-		return idx
+		return 0
 	}
 
 	smLen := len(sm.sorted)
-	idx = sort.Search(smLen, func(i int) bool {
+	idx := sort.Search(smLen, func(i int) bool {
 		return sm.lessFn(boundVal, sm.idx[sm.sorted[i]])
 	})
 
@@ -27,6 +27,7 @@ func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 			idx++
 		}
 	}
+
 	return idx
 }
 
