@@ -35,39 +35,38 @@ import (
 )
 
 func main() {
-  n := 23
-  records := randRecords(n)
+  records := []*sortedmap.Record{
+	&sortedmap.Record{
+	    Key: "openbsd",
+	    Val: time.Date(1995, 10, 18, 8, 37, 1, 0, time.UTC),
+    },
+    &sortedmap.Record{
+	    Key: "unixtime",
+	    Val: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+    },
+    &sortedmap.Record{
+	    Key: "linux",
+	    Val: time.Date(1991, 8, 25, 20, 57, 8, 0, time.UTC),
+    },
+  }
 
-  // Create a new collection:
-  sm := sortedmap.New(n, asc.Time)
+  // Create a new sorted collection with a size suggestion:
+  sm := sortedmap.New(len(records), asc.Time)
 
   // Insert the example records:
   sm.BatchInsert(records)
 
-  // Loop through records, in order, from the lowest possible value,
-  // until reaching the given upper bound:
-  if ch, ok := sm.BoundedIterCh(false, time.Time{}, time.Now()); ok {
+  // Loop through records, in order, from the lower bound value,
+  // until reaching the upper bound value:
+  if ch, ok := sm.BoundedIterCh(false, time.Date(1994, 1, 1, 0, 0, 0, 0, time.UTC), time.Now()); ok {
     for rec := range ch {
       fmt.Printf("%+v\n", rec)
     }
+  } else {
+	  fmt.Println("No values found that were equal to or within the given bounds.")
   }
-  fmt.Println("")
- 
-  if ok := sm.BoundedIterFunc(true, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
-    fmt.Printf("%+v\n", rec)
-    return true
-  }); !ok {
-    // No values, within the bounds, were found.
-  }
-  fmt.Println("")
 
-  m, keys := sm.Map(), sm.Keys()
-  for _, k := range keys {
-    fmt.Printf("%+v\n", m[k])
-  }
-  fmt.Println("")
-
-  // Check out the docs and the test files, for more functionality,
+  // Check out the examples directory, docs, and test files, for more functionality,
   // and further explainations.
 }
 
