@@ -55,9 +55,13 @@ func main() {
   // Insert the example records:
   sm.BatchInsert(records)
 
+  reversed := false
+  lowerBound := time.Date(1994, 1, 1, 0, 0, 0, 0, time.UTC)
+  upperBound := time.Now()
+
   // Loop through records, in order, from the lower bound value,
   // until reaching the upper bound value:
-  if ch, ok := sm.BoundedIterCh(false, time.Date(1994, 1, 1, 0, 0, 0, 0, time.UTC), time.Now()); ok {
+  if ch, ok := sm.BoundedIterCh(reversed, lowerBound, upperBound); ok {
     for rec := range ch {
       fmt.Printf("%+v\n", rec)
     }
