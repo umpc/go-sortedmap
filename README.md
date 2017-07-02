@@ -34,28 +34,17 @@ import (
 )
 
 func main() {
-  records := []*sortedmap.Record{
-    &sortedmap.Record{
-      Key: "OpenBSD",
-      Val: time.Date(1995, 10, 18, 8, 37, 1, 0, time.UTC),
-    },
-    &sortedmap.Record{
-      Key: "UnixTime",
-      Val: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-    },
-    &sortedmap.Record{
-      Key: "Linux",
-      Val: time.Date(1991, 8, 25, 20, 57, 8, 0, time.UTC),
-    },
-  }
-
-  // Create a new sorted collection with a size suggestion:
-  sm := sortedmap.New(len(records), asc.Time)
+  // Create an empty SortedMap with a size suggestion and a less than function:
+  sm := sortedmap.New(3, asc.Time)
 
   // Insert the example records:
-  sm.BatchInsert(records)
+  sm.Insert("OpenBSD",  time.Date(1995, 10, 18,  8, 37, 1, 0, time.UTC))
+  sm.Insert("UnixTime", time.Date(1970,  1,  1,  0,  0, 0, 0, time.UTC))
+  sm.Insert("Linux",    time.Date(1991,  8, 25, 20, 57, 8, 0, time.UTC))
+  sm.Insert("GitHub",   time.Date(2008,  4, 10,  0,  0, 0, 0, time.UTC))
 
-  reversed := false
+  // Set options for iteration:
+  reversed   := true
   lowerBound := time.Date(1994, 1, 1, 0, 0, 0, 0, time.UTC)
   upperBound := time.Now()
 
