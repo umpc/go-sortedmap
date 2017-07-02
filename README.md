@@ -61,13 +61,11 @@ func main() {
   }
   fmt.Println("")
 
-  m, keys := sm.GetMap(), sm.GetKeys()
+  m, keys := sm.Map(), sm.Keys()
   for _, k := range keys {
     fmt.Printf("%+v\n", m[k])
   }
   fmt.Println("")
-
-  
 
   // Check out the docs and the test files, for more functionality,
   // and further explainations.
