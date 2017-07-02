@@ -32,7 +32,7 @@ func (sm *SortedMap) batchInsertMapWithInterfaceKeys(v interface{}) error {
 
 	for key, val := range m {
 		if !sm.insert(key, val) {
-			return fmt.Errorf("Key already exists: %v", key)
+			return fmt.Errorf("Key already exists: %+v", key)
 		}
 	}
 	return nil
@@ -43,7 +43,7 @@ func (sm *SortedMap) batchInsertMapWithStringKeys(v interface{}) error {
 
 	for key, val := range m {
 		if !sm.insert(key, val) {
-			return fmt.Errorf("Key already exists: %v", key)
+			return fmt.Errorf("Key already exists: %+v", key)
 		}
 	}
 	return nil
