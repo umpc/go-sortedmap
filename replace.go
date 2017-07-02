@@ -50,7 +50,8 @@ func (sm *SortedMap) BatchReplaceMap(v interface{}) error {
 
 	case map[string]interface{}:
 		return sm.batchReplaceMapWithStringKeys(v)
-	}
 
-	return fmt.Errorf("%s", unsupportedTypeErr)
+	default:
+		return fmt.Errorf("%s", unsupportedTypeErr)
+	}
 }
