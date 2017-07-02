@@ -28,7 +28,6 @@ package main
 import (
   "fmt"
   "time"
-  mrand "math/rand"
 
   "github.com/umpc/go-sortedmap"
   "github.com/umpc/go-sortedmap/asc"
@@ -37,15 +36,15 @@ import (
 func main() {
   records := []*sortedmap.Record{
 	&sortedmap.Record{
-	    Key: "openbsd",
+	    Key: "OpenBSD",
 	    Val: time.Date(1995, 10, 18, 8, 37, 1, 0, time.UTC),
     },
     &sortedmap.Record{
-	    Key: "unixtime",
+	    Key: "UnixTime",
 	    Val: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
     },
     &sortedmap.Record{
-	    Key: "linux",
+	    Key: "Linux",
 	    Val: time.Date(1991, 8, 25, 20, 57, 8, 0, time.UTC),
     },
   }
@@ -63,43 +62,12 @@ func main() {
       fmt.Printf("%+v\n", rec)
     }
   } else {
-	  fmt.Println("No values found that were equal to or within the given bounds.")
+    fmt.Println("No values found that were equal to or within the given bounds.")
   }
-
-  // Check out the examples directory, docs, and test files, for more functionality,
-  // and further explainations.
-}
-
-func randRecords(n int) []*sortedmap.Record {
-  mrand.Seed(time.Now().UTC().UnixNano())
-  records := make([]*sortedmap.Record, n)
-  for i := range records {
-    year := mrand.Intn(2058)
-    for year < 2000 {
-      year = mrand.Intn(2058)
-    }
-    mth := time.Month(mrand.Intn(12))
-    if mth < 1 {
-      mth++
-    }
-    day := mrand.Intn(28)
-    if day < 1 {
-      day++
-    }
-    hour := mrand.Intn(23)
-    min  := mrand.Intn(59)
-    sec  := mrand.Intn(59)
-
-    t := time.Date(year, mth, day, hour, min, sec, 0, time.UTC)
-
-    records[i] = &sortedmap.Record{
-      Key: t.Format(time.UnixDate),
-      Val: t,
-    }
-  }
-  return records
 }
 ```
+
+Check out the [examples](https://github.com/umpc/go-sortedmap/tree/master/examples), [documentation](https://godoc.org/github.com/umpc/go-sortedmap), and test files, for more features and further explanations.
 
 ## Benchmarks
 
