@@ -27,9 +27,7 @@ func (sm *SortedMap) BatchInsert(recs []Record) []bool {
 	return results
 }
 
-func (sm *SortedMap) batchInsertMapWithInterfaceKeys(v interface{}) error {
-	m := v.(map[interface{}]interface{})
-
+func (sm *SortedMap) batchInsertMapInterfaceKeys(m map[interface{}]interface{}) error {
 	for key, val := range m {
 		if !sm.insert(key, val) {
 			return fmt.Errorf("Key already exists: %+v", key)
@@ -38,9 +36,7 @@ func (sm *SortedMap) batchInsertMapWithInterfaceKeys(v interface{}) error {
 	return nil
 }
 
-func (sm *SortedMap) batchInsertMapWithStringKeys(v interface{}) error {
-	m := v.(map[string]interface{})
-
+func (sm *SortedMap) batchInsertMapStringKeys(m map[string]interface{}) error {
 	for key, val := range m {
 		if !sm.insert(key, val) {
 			return fmt.Errorf("Key already exists: %+v", key)
@@ -49,17 +45,18 @@ func (sm *SortedMap) batchInsertMapWithStringKeys(v interface{}) error {
 	return nil
 }
 
-// BatchInsertMap adds all map keys and values to the collection and returns a slice containing each record's insert status.
-// If a key already exists, the value will not be inserted. Use BatchReplaceMap for the alternative functionality.	
+// BatchInsertMap adds all map keys and values to the collection.
+// If a key already exists, the value will not be inserted and an error will be returned.
+// Use BatchReplaceMap for the alternative functionality.	
 func (sm *SortedMap) BatchInsertMap(v interface{}) error {
 	const unsupportedTypeErr = "Unsupported type."
 
-	switch v.(type) {
+	switch m := v.(type) {
 	case map[interface{}]interface{}:
-		return sm.batchInsertMapWithInterfaceKeys(v)
+		return sm.batchInsertMapInterfaceKeys(m)
 
 	case map[string]interface{}:
-		return sm.batchInsertMapWithStringKeys(v)
+		return sm.batchInsertMapStringKeys(m)
 
 	default:
 		return fmt.Errorf("%s", unsupportedTypeErr)
