@@ -15,7 +15,7 @@ func (sm *SortedMap) Replace(key, val interface{}) {
 
 // BatchReplace adds all given records to the collection.
 // Even if a key already exists, the value will be inserted. Use BatchInsert for the alternative functionality.	
-func (sm *SortedMap) BatchReplace(recs []*Record) {
+func (sm *SortedMap) BatchReplace(recs []Record) {
 	for _, rec := range recs {
 		sm.replace(rec.Key, rec.Val)
 	}

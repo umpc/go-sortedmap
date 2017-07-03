@@ -42,11 +42,10 @@ func randRecord() Record {
 	}
 }
 
-func randRecords(n int) []*Record {
-	records := make([]*Record, n)
+func randRecords(n int) []Record {
+	records := make([]Record, n)
 	for i := range records {
-		rec := randRecord()
-		records[i] = &rec
+		records[i] = randRecord()
 	}
 	return records
 }
@@ -79,7 +78,7 @@ func verifyRecords(ch <-chan Record, reverse bool) error {
 	return nil
 }
 
-func newSortedMapFromRandRecords(n int) (*SortedMap, []*Record, error) {
+func newSortedMapFromRandRecords(n int) (*SortedMap, []Record, error) {
 	records := randRecords(n)
 	sm := New(0, asc.Time)
 	sm.BatchReplace(records)
@@ -87,7 +86,7 @@ func newSortedMapFromRandRecords(n int) (*SortedMap, []*Record, error) {
 	return sm, records, verifyRecords(sm.IterCh(), false)
 }
 
-func newRandSortedMapWithKeys(n int) (*SortedMap, []*Record, []interface{}, error) {
+func newRandSortedMapWithKeys(n int) (*SortedMap, []Record, []interface{}, error) {
 	sm, records, err := newSortedMapFromRandRecords(n)
 	if err != nil {
 		return nil, nil, nil, err
