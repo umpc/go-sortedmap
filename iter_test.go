@@ -292,6 +292,7 @@ func TestCancelCustomIterCh(t *testing.T) {
 		}
 		defer ch.Close()
 
+		<-ch.Records()
 		ch.Close()
 
 		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
