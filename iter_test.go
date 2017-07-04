@@ -128,23 +128,7 @@ func TestBoundedIterCh(t *testing.T) {
 		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
-	if ch, ok := sm.BoundedIterCh(reversed, maxTime, time.Time{}); ok {
-		if err := verifyRecords(ch, reversed); err != nil {
-			t.Fatal(err)
-		}
-	} else {
-		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
-	}
-
 	if ch, ok := sm.BoundedIterCh(reversed, earlierDate, time.Now()); ok {
-		if err := verifyRecords(ch, reversed); err != nil {
-			t.Fatal(err)
-		}
-	} else {
-		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
-	}
-
-	if ch, ok := sm.BoundedIterCh(reversed, time.Now(), earlierDate); ok {
 		if err := verifyRecords(ch, reversed); err != nil {
 			t.Fatal(err)
 		}
