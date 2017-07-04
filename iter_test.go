@@ -305,24 +305,6 @@ func TestBoundedIterFunc(t *testing.T) {
 		t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 	}
 
-	if ok := sm.BoundedIterFunc(false, laterDate, earlierDate, func(rec Record) bool {
-		if rec.Key == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
-		}
-		return false
-	}); !ok {
-		t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
-	}
-
-	if ok := sm.BoundedIterFunc(false, laterDate, laterDate, func(rec Record) bool {
-		if rec.Key == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
-		}
-		return false
-	}); ok {
-		t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
-	}
-
 	if ok := sm.BoundedIterFunc(false, laterDate, laterDate, func(rec Record) bool {
 		if rec.Key == nil {
 			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
@@ -370,15 +352,6 @@ func TestReversedBoundedIterFunc(t *testing.T) {
 	}
 
 	if ok := sm.BoundedIterFunc(true, earlierDate, laterDate, func(rec Record) bool {
-		if rec.Key == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
-		}
-		return false
-	}); !ok {
-		t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
-	}
-
-	if ok := sm.BoundedIterFunc(true, laterDate, earlierDate, func(rec Record) bool {
 		if rec.Key == nil {
 			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
