@@ -39,7 +39,7 @@ func TestIterChTimeout(t *testing.T) {
 			}
 		}
 	} else {
-		t.Fatal("TestIterChTimeout failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterChTimeout failed: %v", generalBoundsErr)
 	}
 
 	params.LowerBound = time.Time{}
@@ -54,7 +54,7 @@ func TestIterChTimeout(t *testing.T) {
 			}
 		}
 	} else {
-		t.Fatal("TestIterChTimeout failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterChTimeout failed: %v", generalBoundsErr)
 	}
 
 	params = IterChParams{
@@ -70,7 +70,7 @@ func TestIterChTimeout(t *testing.T) {
 			}
 		}
 	} else {
-		t.Fatal("TestIterChTimeout failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterChTimeout failed: %v", generalBoundsErr)
 	}
 
 	params.LowerBound = time.Time{}
@@ -85,7 +85,7 @@ func TestIterChTimeout(t *testing.T) {
 			}
 		}
 	} else {
-		t.Fatal("TestIterChTimeout failed: %v", generalBoundsErr)
+		t.Fatalf("TestIterChTimeout failed: %v", generalBoundsErr)
 	}
 }
 
@@ -104,7 +104,7 @@ func TestBoundedIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
 	if ch, ok := sm.BoundedIterCh(reversed, time.Time{}, maxTime); ok {
@@ -112,7 +112,7 @@ func TestBoundedIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
 	if ch, ok := sm.BoundedIterCh(reversed, maxTime, time.Time{}); ok {
@@ -120,7 +120,7 @@ func TestBoundedIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
 	if ch, ok := sm.BoundedIterCh(reversed, earlierDate, time.Now()); ok {
@@ -128,7 +128,7 @@ func TestBoundedIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
 	if ch, ok := sm.BoundedIterCh(reversed, time.Now(), earlierDate); ok {
@@ -136,7 +136,7 @@ func TestBoundedIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
 	if ch, ok := sm.BoundedIterCh(reversed, time.Now(), laterDate); ok {
@@ -144,11 +144,11 @@ func TestBoundedIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 
 	if _, ok := sm.BoundedIterCh(reversed, laterDate, laterDate); ok {
-		t.Fatal("TestBoundedIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestBoundedIterCh failed: %v", generalBoundsErr)
 	}
 }
 
@@ -178,7 +178,7 @@ func TestCustomIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestCustomIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
 	}
 
 	params = IterChParams{
@@ -193,7 +193,7 @@ func TestCustomIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestCustomIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
 	}
 
 	params = IterChParams{
@@ -208,7 +208,7 @@ func TestCustomIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestCustomIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
 	}
 
 	reversed = false
@@ -224,7 +224,7 @@ func TestCustomIterCh(t *testing.T) {
 			t.Fatal(err)
 		}
 	} else {
-		t.Fatal("TestCustomIterCh failed: %v", generalBoundsErr)
+		t.Fatalf("TestCustomIterCh failed: %v", generalBoundsErr)
 	}
 }
 
@@ -359,6 +359,15 @@ func TestBoundedIterFunc(t *testing.T) {
 		}
 		return false
 	}); !ok {
+		t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
+	}
+
+	if ok := sm.BoundedIterFunc(false, laterDate, laterDate, func(rec Record) bool {
+		if rec.Key == nil {
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
+		}
+		return false
+	}); ok {
 		t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 	}
 
