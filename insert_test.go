@@ -16,18 +16,30 @@ func TestInsert(t *testing.T) {
 			t.Fatalf("Insert failed: %v", keyExistsErr)
 		}
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
-		t.Fatal(err)
-	}
+
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	for i := range records {
 		if sm.Insert(records[i].Key, records[i].Val) {
 			t.Fatalf("Insert failed: %v", notFoundErr)
 		}
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
-		t.Fatal(err)
-	}
+
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
 }
 
 func TestBatchInsert(t *testing.T) {
@@ -40,9 +52,15 @@ func TestBatchInsert(t *testing.T) {
 			t.Fatalf("BatchInsert failed: %v", keyExistsErr)
 		}
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
-		t.Fatal(err)
-	}
+
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
 }
 
 func TestBatchInsertMapWithInterfaceKeys(t *testing.T) {

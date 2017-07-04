@@ -1,6 +1,6 @@
 package sortedmap
 
-import "fmt"
+import "errors"
 
 func (sm *SortedMap) replace(key, val interface{}) {
 	sm.delete(key)
@@ -51,6 +51,6 @@ func (sm *SortedMap) BatchReplaceMap(v interface{}) error {
 		return nil
 
 	default:
-		return fmt.Errorf("%s", unsupportedTypeErr)
+		return errors.New(unsupportedTypeErr)
 	}
 }

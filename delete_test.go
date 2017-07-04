@@ -10,13 +10,22 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if sm.Delete("") {
 		t.Fatalf("Delete: %v", invalidDelete)
 	}
+
 	for _, rec := range records {
 		sm.Delete(rec.Key)
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+
+	iterCh := sm.IterCh()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer iterCh.Close()
+
+	if err := verifyRecords(iterCh.Records(), false); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -40,7 +49,11 @@ func TestBatchDelete(t *testing.T) {
 			t.Fatalf("BatchDelete: %v", invalidDelete)
 		}
 	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+
+	iterCh := sm.IterCh()
+	defer iterCh.Close()
+
+	if err := verifyRecords(iterCh.Records(), false); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -58,39 +71,63 @@ func TestBoundedDelete(t *testing.T) {
 
 	earlierDate := time.Date(200, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	if !sm.BoundedDelete(nil, nil) {
-		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
-	}
-
-	if !sm.BoundedDelete(nil, time.Now()) {
-		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
-	}
-
-	if !sm.BoundedDelete(time.Now(), nil) {
-		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
-	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+	if err := sm.BoundedDelete(nil, nil); err != nil {
 		t.Fatal(err)
 	}
 
-	if !sm.BoundedDelete(earlierDate, time.Now()) {
-		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
-	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+	if err := sm.BoundedDelete(nil, time.Now()); err != nil {
 		t.Fatal(err)
 	}
 
-	if !sm.BoundedDelete(time.Now(), earlierDate) {
-		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
-	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+	if err := sm.BoundedDelete(time.Now(), nil); err != nil {
 		t.Fatal(err)
 	}
 
-	if sm.BoundedDelete(earlierDate, earlierDate) {
-		t.Fatalf("TestBoundedDelete failed: %v", generalBoundsErr)
-	}
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	if err := sm.BoundedDelete(earlierDate, time.Now()); err != nil {
 		t.Fatal(err)
 	}
+
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	if err := sm.BoundedDelete(time.Now(), earlierDate); err != nil {
+		t.Fatal(err)
+	}
+
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	if err := sm.BoundedDelete(earlierDate, earlierDate); err == nil {
+		t.Fatal(err)
+	}
+
+	func() {
+		iterCh := sm.IterCh()
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
+	}()
 }

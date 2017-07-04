@@ -50,12 +50,14 @@ func main() {
 
   // Select values >= lowerBound and values <= upperBound.
   // Loop through the values, in reverse order:
-  if ch, ok := sm.BoundedIterCh(reversed, lowerBound, upperBound); ok {
-    for rec := range ch {
-      fmt.Printf("%+v\n", rec)
-    }
-  } else {
-    fmt.Println("No values found that were equal to or within the given bounds.")
+  iterCh, err := sm.BoundedIterCh(reversed, lowerBound, upperBound)
+  if err != nil {
+    fmt.Println(err)
+  }
+  defer iterCh.Close()
+
+  for rec := range iterCh.Records() {
+    fmt.Printf("%+v\n", rec)
   }
 }
 ```

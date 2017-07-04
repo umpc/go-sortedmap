@@ -1,6 +1,9 @@
 package sortedmap
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 func (sm *SortedMap) insert(key, val interface{}) bool {
 	if _, ok := sm.idx[key]; !ok {
@@ -59,6 +62,6 @@ func (sm *SortedMap) BatchInsertMap(v interface{}) error {
 		return sm.batchInsertMapStringKeys(m)
 
 	default:
-		return fmt.Errorf("%s", unsupportedTypeErr)
+		return errors.New(unsupportedTypeErr)
 	}
 }

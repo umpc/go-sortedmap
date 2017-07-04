@@ -16,7 +16,10 @@ func TestReplace(t *testing.T) {
 		}
 	}
 
-	if err := verifyRecords(sm.IterCh(), false); err != nil {
+	iterCh := sm.IterCh()
+	defer iterCh.Close()
+
+	if err := verifyRecords(iterCh.Records(), false); err != nil {
 		t.Fatal(err)
 	}
 }

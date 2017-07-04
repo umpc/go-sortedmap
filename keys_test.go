@@ -29,9 +29,9 @@ func TestBoundedKeys(t *testing.T) {
 		t.Fatal(err)
 	}
 	i := 0
-	keys, ok := sm.BoundedKeys(time.Time{}, time.Now())
-	if !ok {
-		t.Fatal("No values fall between or are equal to the given bounds.")
+	keys, err := sm.BoundedKeys(time.Time{}, time.Now())
+	if err != nil {
+		t.Fatal(err)
 	}
 	for _, key := range keys {
 		if key == nil {
@@ -41,15 +41,5 @@ func TestBoundedKeys(t *testing.T) {
 	}
 	if i == 0 {
 		t.Fatal("The returned slice was empty.")
-	}
-}
-
-func TestBoundedKeysWithNoBoundsReturned(t *testing.T) {
-	sm, _, err := newSortedMapFromRandRecords(300)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if val, ok := sm.BoundedKeys(time.Now().Add(-1*time.Microsecond), time.Now()); ok {
-		t.Fatalf("Values fall between or are equal to the given bounds when it should not have returned bounds: %+v", sm.idx[val[0]])
 	}
 }

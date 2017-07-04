@@ -1,6 +1,9 @@
 package sortedmap
 
-import "sort"
+import (
+	"errors"
+	"sort"
+)
 
 func (sm *SortedMap) delete(key interface{}) bool {
 	if val, ok := sm.idx[key]; ok {
@@ -27,16 +30,16 @@ func (sm *SortedMap) delete(key interface{}) bool {
 	return false
 }
 
-func (sm *SortedMap) boundedDelete(lowerBound, upperBound interface{}) bool {
+func (sm *SortedMap) boundedDelete(lowerBound, upperBound interface{}) error {
 	iterBounds := sm.boundsIdxSearch(lowerBound, upperBound)
 	if iterBounds == nil {
-		return false
+		return errors.New(noValuesErr)
 	}
 	for i := iterBounds[0]; i <= iterBounds[1]-i; i++ {
 		delete(sm.idx, sm.sorted[i])
 		sm.sorted = deleteInterface(sm.sorted, i)
 	}
-	return true
+	return nil
 }
 
 // Delete removes a value from the collection, using the given key.
@@ -56,6 +59,6 @@ func (sm *SortedMap) BatchDelete(keys []interface{}) []bool {
 
 // BoundedDelete removes values that are between the given values from the collection.
 // BoundedDelete returns true if the operation was successful, or false otherwise.
-func (sm *SortedMap) BoundedDelete(lowerBound, upperBound interface{}) bool {
+func (sm *SortedMap) BoundedDelete(lowerBound, upperBound interface{}) error {
 	return sm.boundedDelete(lowerBound, upperBound)
 }

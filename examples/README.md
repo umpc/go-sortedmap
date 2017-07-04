@@ -114,8 +114,6 @@ SortedMap supports three specific ways of processing iterable data:
 
 ```IterCh``` is a simple way of iterating over the entire set, in order.
 
-Be aware that the writing goroutine cannot exit until it finishes sending all of its records. To get around this default behavior, please use ```CustomIterCh``` and set a timeout.
-
 ```go
 package main
 
@@ -138,7 +136,10 @@ func main() {
   // BatchInsert the example records:
   sm.BatchInsert(records)
 
-  for rec := range sm.IterCh() {
+  iterCh := sm.IterCh()
+  defer iterCh.Close()
+
+  for rec := range iterCh.Records() {
     fmt.Printf("%+v\n", rec)
   }
 }
@@ -170,10 +171,14 @@ func main() {
   // BatchInsert the example records:
   sm.BatchInsert(records)
 
-  if ch, ok := sm.BoundedIterCh(false, time.Time{}, time.Now()); ok {
-    for rec := range ch {
-      fmt.Printf("%+v\n", rec)
-    }
+  iterCh, err := sm.BoundedIterCh(false, time.Time{}, time.Now())
+  if err != nil {
+    fmt.Println(err)
+  }
+  defer iterCh.Close()
+
+  for rec := range iterCh.Records() {
+    fmt.Printf("%+v\n", rec)
   }
 }
 ```
@@ -211,10 +216,14 @@ func main() {
     Reversed: true,
   }
 
-  if ch, ok := sm.CustomIterCh(params); ok {
-    for rec := range ch {
-      fmt.Printf("%+v\n", rec)
-    }
+  iterCh, err := sm.CustomIterCh(false, time.Time{}, time.Now())
+  if err != nil {
+    fmt.Println(err)
+  }
+  defer iterCh.Close()
+
+  for rec := range iterCh.Records() {
+    fmt.Printf("%+v\n", rec)
   }
 }
 ```
@@ -385,8 +394,8 @@ func main() {
   sm.BatchInsert(records)
 
   // Delete values equal to or within the given bound values.
-  if !sm.BoundedDelete(time.Time{}, time.Now()) {
-    fmt.Println("No values fall within the specified bounds.")
+  if err := sm.BoundedDelete(time.Time{}, time.Now()); err != nil {
+    fmt.Println(err)
   }
 }
 ```
