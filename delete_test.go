@@ -63,7 +63,7 @@ func TestBoundedDelete(t *testing.T) {
 	const (
 		nilBoundValsErr  = "accepted nil bound value"
 		generalBoundsErr = "general bounds error"
-		shouldFailErr = "Equal bound values that do not match a stored value should always fail."
+		shouldFailErr    = "Equal bound values that do not match a stored value should always fail."
 	)
 
 	sm, _, err := newSortedMapFromRandRecords(300)
@@ -88,7 +88,7 @@ func TestBoundedDelete(t *testing.T) {
 	func() {
 		iterCh, err := sm.IterCh()
 		if err != nil {
-			
+
 		} else {
 			defer iterCh.Close()
 
@@ -105,7 +105,7 @@ func TestBoundedDelete(t *testing.T) {
 	func() {
 		iterCh, err := sm.IterCh()
 		if err != nil {
-			
+
 		} else {
 			defer iterCh.Close()
 
@@ -122,7 +122,7 @@ func TestBoundedDelete(t *testing.T) {
 	func() {
 		iterCh, err := sm.IterCh()
 		if err != nil {
-			
+
 		} else {
 			defer iterCh.Close()
 
@@ -139,7 +139,7 @@ func TestBoundedDelete(t *testing.T) {
 	func() {
 		iterCh, err := sm.IterCh()
 		if err != nil {
-			
+
 		} else {
 			defer iterCh.Close()
 

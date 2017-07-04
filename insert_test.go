@@ -23,7 +23,7 @@ func TestInsert(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			defer iterCh.Close()
-	
+
 			if err := verifyRecords(iterCh.Records(), false); err != nil {
 				t.Fatal(err)
 			}
@@ -42,7 +42,7 @@ func TestInsert(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			defer iterCh.Close()
-	
+
 			if err := verifyRecords(iterCh.Records(), false); err != nil {
 				t.Fatal(err)
 			}
@@ -67,7 +67,7 @@ func TestBatchInsert(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			defer iterCh.Close()
-	
+
 			if err := verifyRecords(iterCh.Records(), false); err != nil {
 				t.Fatal(err)
 			}
