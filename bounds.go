@@ -50,7 +50,7 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 	} else {
 		upperBoundIdx = sm.setBoundIdx(upperBound)
 		if upperBoundIdx < smLen-1 {
-			valFromIdx := sm.idx[sm.sorted[upperBoundIdx + 1]]
+			valFromIdx := sm.idx[sm.sorted[upperBoundIdx+1]]
 			if !sm.lessFn(valFromIdx, upperBound) && !sm.lessFn(upperBound, valFromIdx) {
 				upperBoundIdx++
 			}

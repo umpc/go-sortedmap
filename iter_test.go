@@ -396,8 +396,7 @@ func TestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
 			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return false
-	})
-	err != nil {
+	}); err != nil {
 		t.Fatal(err)
 	}
 }
