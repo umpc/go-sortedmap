@@ -249,13 +249,8 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	func() {
-		ch, err := sm.CustomIterCh(params)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer ch.Close()
-
-		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
+		_, err := sm.CustomIterCh(params)
+		if err == nil {
 			t.Fatal(err)
 		}
 	}()
@@ -269,13 +264,8 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	func() {
-		ch, err := sm.CustomIterCh(params)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer ch.Close()
-
-		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
+		_, err := sm.CustomIterCh(params)
+		if err == nil {
 			t.Fatal(err)
 		}
 	}()
@@ -395,7 +385,7 @@ func TestBoundedIterFunc(t *testing.T) {
 	}
 }
 
-func TestTestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
+func TestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		t.Fatal(err)
@@ -406,8 +396,9 @@ func TestTestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
 			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
 		}
 		return false
-	}); err == nil {
-		t.Fatal("Values fall between or are equal to the given bounds when it should not have returned bounds.")
+	})
+	err != nil {
+		t.Fatal(err)
 	}
 }
 

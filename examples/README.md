@@ -19,9 +19,9 @@
 The following function is used to generate test data in the examples:
 
 ```go
-func randRecords(n int) []*sortedmap.Record {
+func randRecords(n int) []sortedmap.Record {
   mrand.Seed(time.Now().UTC().UnixNano())
-  records := make([]*sortedmap.Record, n)
+  records := make([]sortedmap.Record, n)
   for i := range records {
     year := mrand.Intn(2058)
     for year < 2000 {
@@ -41,7 +41,7 @@ func randRecords(n int) []*sortedmap.Record {
 
     t := time.Date(year, mth, day, hour, min, sec, 0, time.UTC)
 
-    records[i] = &sortedmap.Record{
+    records[i] = sortedmap.Record{
       Key: t.Format(time.UnixDate),
       Val: t,
     }
@@ -174,11 +174,12 @@ func main() {
   iterCh, err := sm.BoundedIterCh(false, time.Time{}, time.Now())
   if err != nil {
     fmt.Println(err)
-  }
-  defer iterCh.Close()
+  } else {
+    defer iterCh.Close()
 
-  for rec := range iterCh.Records() {
-    fmt.Printf("%+v\n", rec)
+    for rec := range iterCh.Records() {
+      fmt.Printf("%+v\n", rec)
+    }
   }
 }
 ```
@@ -216,14 +217,15 @@ func main() {
     Reversed: true,
   }
 
-  iterCh, err := sm.CustomIterCh(false, time.Time{}, time.Now())
+  iterCh, err := sm.CustomIterCh(params)
   if err != nil {
     fmt.Println(err)
-  }
-  defer iterCh.Close()
+  } else {
+    defer iterCh.Close()
 
-  for rec := range iterCh.Records() {
-    fmt.Printf("%+v\n", rec)
+    for rec := range iterCh.Records() {
+      fmt.Printf("%+v\n", rec)
+    }
   }
 }
 ```
@@ -287,11 +289,12 @@ func main() {
   // BatchInsert the example records:
   sm.BatchInsert(records)
 
-  if !sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
+  if err := sm.BoundedIterFunc(false, time.Time{}, time.Now(), func(rec sortedmap.Record) bool {
     fmt.Printf("%+v\n", rec)
     return true
-  }) {
-    fmt.Println("No values fall within the specified bounds.")
+  })
+  err != nil {
+    fmt.Println(err)
   }
 }
 ```
@@ -357,12 +360,13 @@ func main() {
 
   // Copy the map + slice headers.
   m := sm.Map()
-  if keys, ok := sm.BoundedKeys(time.Time{}, time.Now()); ok {
+  keys, err := sm.BoundedKeys(time.Time{}, time.Now())
+  if err != nil {
+    fmt.Println(err)
+  } else {
     for _, k := range keys {
       fmt.Printf("%+v\n", m[k])
     }
-  } else {
-    fmt.Println("No values fall within the specified bounds.")
   }
 }
 ```

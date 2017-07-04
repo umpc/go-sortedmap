@@ -105,7 +105,7 @@ func TestBoundedDelete(t *testing.T) {
 		}
 	}()
 
-	if err := sm.BoundedDelete(time.Now(), earlierDate); err != nil {
+	if err := sm.BoundedDelete(time.Now(), earlierDate); err == nil {
 		t.Fatal(err)
 	}
 
@@ -118,7 +118,7 @@ func TestBoundedDelete(t *testing.T) {
 		}
 	}()
 
-	if err := sm.BoundedDelete(earlierDate, earlierDate); err == nil {
+	if err := sm.BoundedDelete(earlierDate, earlierDate); err != nil {
 		t.Fatal(err)
 	}
 

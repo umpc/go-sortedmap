@@ -18,27 +18,43 @@ func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 	if idx > 0 {
 		idx--
 	}
-	valFromIdx := sm.idx[sm.sorted[idx]]
-
-	// If the bound value is greater than or equal to the value from the map,
-	// select the next index value.
-	if idx < smLen-1 {
-		if sm.lessFn(valFromIdx, boundVal) {
-			idx++
-		}
-	}
 
 	return idx
 }
 
 func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
+	smLen := len(sm.sorted)
+
+	if lowerBound != nil && upperBound != nil {
+		if sm.lessFn(upperBound, lowerBound) {
+			return nil
+		}
+	}
+
 	lowerBoundIdx := sm.setBoundIdx(lowerBound)
+	if lowerBound != nil {
+		if lowerBoundIdx < smLen-1 {
+			valFromIdx := sm.idx[sm.sorted[lowerBoundIdx]]
+
+			// If the bound value is greater than or equal to the value from the map,
+			// select the next index value.
+			if sm.lessFn(valFromIdx, lowerBound) {
+				lowerBoundIdx++
+			}
+		}
+	}
 
 	upperBoundIdx := 0
 	if upperBound == nil {
-		upperBoundIdx = len(sm.sorted) - 1
+		upperBoundIdx = smLen - 1
 	} else {
 		upperBoundIdx = sm.setBoundIdx(upperBound)
+		if upperBoundIdx < smLen-1 {
+			valFromIdx := sm.idx[sm.sorted[upperBoundIdx + 1]]
+			if !sm.lessFn(valFromIdx, upperBound) && !sm.lessFn(upperBound, valFromIdx) {
+				upperBoundIdx++
+			}
+		}
 	}
 
 	if lowerBound != nil && upperBound != nil {
@@ -47,7 +63,9 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 
 			if !sm.lessFn(lowerBound, upperBound) && !sm.lessFn(upperBound, lowerBound) {
 				// lowerBound == upperBound
-				return nil
+				if sm.lessFn(valFromIdx, lowerBound) || sm.lessFn(lowerBound, valFromIdx) {
+					return nil
+				}
 			}
 
 			if sm.lessFn(valFromIdx, lowerBound) || sm.lessFn(upperBound, valFromIdx) {
