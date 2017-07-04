@@ -5,11 +5,15 @@ import (
 	"time"
 )
 
+// IterChCloser allows records to be read through a channel that is returned by the Records method.
+// IterChCloser values should be closed after use using the Close method.
 type IterChCloser struct {
 	ch       chan Record
 	canceled chan struct{}
 }
 
+// Close cancels a channel-based iteration and causes the sending goroutine to exit.
+// Close should be used after an IterChCloser is finished being read from.
 func (iterCh *IterChCloser) Close() error {
 	select {
 	case iterCh.canceled <- struct{}{}:
@@ -19,6 +23,8 @@ func (iterCh *IterChCloser) Close() error {
 	return nil
 }
 
+// Records returns nil if the IterChCloser has been closed.
+// Otherwise, Record returns a channel that records can be read from.
 func (iterCh *IterChCloser) Records() <-chan Record {
 	select {
 	case <-iterCh.canceled:
