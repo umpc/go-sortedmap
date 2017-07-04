@@ -8,7 +8,8 @@ import (
 
 func BenchmarkNew(b *testing.B) {
 	var sm *SortedMap
-	if sm == nil {}
+	if sm == nil {
+	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

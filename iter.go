@@ -7,10 +7,10 @@ import "time"
 // channel send goroutines to time-out.
 // BufSize is set to 1 if its field is set to a lower value.
 // LowerBound and UpperBound default to regular iteration when left unset.
-type IterChParams struct{
-	Reversed bool
+type IterChParams struct {
+	Reversed    bool
 	SendTimeout time.Duration
-	BufSize int
+	BufSize     int
 	LowerBound,
 	UpperBound interface{}
 }
@@ -119,7 +119,7 @@ func (sm *SortedMap) IterCh() <-chan Record {
 // This method defaults to the expected behavior of blocking until a channel send completes, with no timeout.
 func (sm *SortedMap) BoundedIterCh(reversed bool, lowerBound, upperBound interface{}) (<-chan Record, bool) {
 	return sm.iterCh(IterChParams{
-		Reversed: reversed,
+		Reversed:   reversed,
 		LowerBound: lowerBound,
 		UpperBound: upperBound,
 	})

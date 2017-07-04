@@ -16,7 +16,7 @@ func (sm *SortedMap) Replace(key, val interface{}) {
 
 // BatchReplace adds all given records to the collection.
 // Even if a key already exists, the value will be inserted.
-// Use BatchInsert for the alternative functionality.	
+// Use BatchInsert for the alternative functionality.
 func (sm *SortedMap) BatchReplace(recs []Record) {
 	for _, rec := range recs {
 		sm.replace(rec.Key, rec.Val)
@@ -37,7 +37,7 @@ func (sm *SortedMap) batchReplaceMapStringKeys(m map[string]interface{}) {
 
 // BatchReplaceMap adds all map keys and values to the collection.
 // Even if a key already exists, the value will be inserted.
-// Use BatchInsertMap for the alternative functionality.	
+// Use BatchInsertMap for the alternative functionality.
 func (sm *SortedMap) BatchReplaceMap(v interface{}) error {
 	const unsupportedTypeErr = "Unsupported type."
 

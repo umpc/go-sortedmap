@@ -6,14 +6,14 @@ import (
 )
 
 const (
-	nilBoundValsErr = "accepted nil bound values"
+	nilBoundValsErr  = "accepted nil bound values"
 	generalBoundsErr = "between bounds error"
-	nilValErr = "nil value!"
-	nonNilValErr = "non-nil value"
-	runawayIterErr = "runaway iterator!"
+	nilValErr        = "nil value!"
+	nonNilValErr     = "non-nil value"
+	runawayIterErr   = "runaway iterator!"
 )
 
-var maxTime = time.Unix(1<<63 - 62135596801, 999999999)
+var maxTime = time.Unix(1<<63-62135596801, 999999999)
 
 func TestIterCh(t *testing.T) {
 	if _, _, err := newSortedMapFromRandRecords(1000); err != nil {
@@ -33,7 +33,7 @@ func TestIterChTimeout(t *testing.T) {
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
 			time.Sleep(sleepDur)
-			rec := <- ch
+			rec := <-ch
 			if i > 1 && rec.Key != nil {
 				t.Fatalf("TestIterChTimeout failed: %v: %v", nonNilValErr, rec.Key)
 			}
@@ -48,7 +48,7 @@ func TestIterChTimeout(t *testing.T) {
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
 			time.Sleep(sleepDur)
-			rec := <- ch
+			rec := <-ch
 			if i > 1 && rec.Key != nil {
 				t.Fatalf("TestIterChTimeout failed: %v: %v", nonNilValErr, rec.Key)
 			}
@@ -58,13 +58,13 @@ func TestIterChTimeout(t *testing.T) {
 	}
 
 	params = IterChParams{
-		Reversed: true,
+		Reversed:    true,
 		SendTimeout: timeout,
 	}
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
 			time.Sleep(sleepDur)
-			rec := <- ch
+			rec := <-ch
 			if i > 1 && rec.Key != nil {
 				t.Fatalf("TestIterChTimeout failed: %v: %v", nonNilValErr, rec.Key)
 			}
@@ -79,7 +79,7 @@ func TestIterChTimeout(t *testing.T) {
 	if ch, ok := sm.CustomIterCh(params); ok {
 		for i := 0; i < 5; i++ {
 			time.Sleep(sleepDur)
-			rec := <- ch
+			rec := <-ch
 			if i > 1 && rec.Key != nil {
 				t.Fatalf("TestIterChTimeout failed: %v: %v", nonNilValErr, rec.Key)
 			}
@@ -154,7 +154,7 @@ func TestBoundedIterCh(t *testing.T) {
 
 func TestCustomIterCh(t *testing.T) {
 	const (
-		nilBoundValsErr = "accepted two nil bound values"
+		nilBoundValsErr  = "accepted two nil bound values"
 		generalBoundsErr = "only one bound value"
 	)
 	sm, _, err := newSortedMapFromRandRecords(1000)
@@ -170,7 +170,7 @@ func TestCustomIterCh(t *testing.T) {
 
 	params := IterChParams{
 		Reversed: reversed,
-		BufSize: buffSize,
+		BufSize:  buffSize,
 	}
 
 	if ch, ok := sm.CustomIterCh(params); ok {
@@ -182,8 +182,8 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	params = IterChParams{
-		Reversed: reversed,
-		BufSize: buffSize,
+		Reversed:   reversed,
+		BufSize:    buffSize,
 		LowerBound: earlierDate,
 		UpperBound: laterDate,
 	}
@@ -197,8 +197,8 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	params = IterChParams{
-		Reversed: reversed,
-		BufSize: buffSize,
+		Reversed:   reversed,
+		BufSize:    buffSize,
 		LowerBound: laterDate,
 		UpperBound: earlierDate,
 	}
@@ -213,8 +213,8 @@ func TestCustomIterCh(t *testing.T) {
 
 	reversed = false
 	params = IterChParams{
-		Reversed: reversed,
-		BufSize: 0,
+		Reversed:   reversed,
+		BufSize:    0,
 		LowerBound: laterDate,
 		UpperBound: earlierDate,
 	}

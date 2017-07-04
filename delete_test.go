@@ -47,7 +47,7 @@ func TestBatchDelete(t *testing.T) {
 
 func TestBoundedDelete(t *testing.T) {
 	const (
-		nilBoundValsErr = "accepted nil bound value"
+		nilBoundValsErr  = "accepted nil bound value"
 		generalBoundsErr = "general bounds error"
 	)
 

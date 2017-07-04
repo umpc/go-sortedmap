@@ -133,7 +133,7 @@ func TestBatchInsertMapWithExistingStringKeys(t *testing.T) {
 	}
 }
 
-func TestBatchInsertMapWithNilType(t *testing.T) { 
+func TestBatchInsertMapWithNilType(t *testing.T) {
 	if err := New(0, asc.Time).BatchInsertMap(nil); err == nil {
 		t.Fatal("a nil type was allowed where a supported map type is required.")
 	}

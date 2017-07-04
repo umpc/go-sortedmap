@@ -5,7 +5,7 @@ func (sm *SortedMap) keys(lowerBound, upperBound interface{}) ([]interface{}, bo
 	if idxBounds == nil {
 		return nil, false
 	}
-	return sm.sorted[idxBounds[0]:idxBounds[1] + 1], true
+	return sm.sorted[idxBounds[0] : idxBounds[1]+1], true
 }
 
 // Keys returns a slice containing sorted keys.

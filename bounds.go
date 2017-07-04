@@ -22,7 +22,7 @@ func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 
 	// If the bound value is greater than or equal to the value from the map,
 	// select the next index value.
-	if idx < smLen - 1 {
+	if idx < smLen-1 {
 		if sm.lessFn(valFromIdx, boundVal) {
 			idx++
 		}

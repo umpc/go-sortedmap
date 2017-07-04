@@ -47,7 +47,7 @@ func (sm *SortedMap) batchInsertMapStringKeys(m map[string]interface{}) error {
 
 // BatchInsertMap adds all map keys and values to the collection.
 // If a key already exists, the value will not be inserted and an error will be returned.
-// Use BatchReplaceMap for the alternative functionality.	
+// Use BatchReplaceMap for the alternative functionality.
 func (sm *SortedMap) BatchInsertMap(v interface{}) error {
 	const unsupportedTypeErr = "Unsupported type."
 

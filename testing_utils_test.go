@@ -2,8 +2,8 @@ package sortedmap
 
 import (
 	"fmt"
-	"time"
 	mrand "math/rand"
+	"time"
 
 	"github.com/umpc/go-sortedmap/asc"
 )
