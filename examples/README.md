@@ -112,7 +112,7 @@ SortedMap supports three specific ways of processing iterable data:
 
 ### IterCh
 
-```IterCh``` is a simple way of iterating over the entire set, in order.
+```IterCh``` is a simple way of iterating over the entire set, in order. The returned value should be closed when finished using it, to close any sending goroutines.
 
 ```go
 package main
