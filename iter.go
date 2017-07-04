@@ -151,9 +151,8 @@ func (sm *SortedMap) iterFunc(reversed bool, lowerBound, upperBound interface{},
 
 // IterCh returns a channel that sorted records can be read from and processed.
 // This method defaults to the expected behavior of blocking until a read, with no timeout.
-func (sm *SortedMap) IterCh() IterChCloser {
-	iterCh, _ := sm.iterCh(IterChParams{})
-	return iterCh
+func (sm *SortedMap) IterCh() (IterChCloser, error) {
+	return sm.iterCh(IterChParams{})
 }
 
 // BoundedIterCh returns a channel that sorted records can be read from and processed.

@@ -22,8 +22,44 @@ func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
 	return idx
 }
 
+func (sm *SortedMap) lowerBoundIncrCondition(i, j interface{}) bool {
+	return sm.lessFn(j, i)
+}
+
+func (sm *SortedMap) lowerBoundRetCondition(i, j interface{}) bool {
+	return sm.lessFn(j, i)
+}
+
+func (sm *SortedMap) upperBoundIncrCondition(i, j interface{}) bool {
+	return !sm.lessFn(j, i) && !sm.lessFn(i, j)
+}
+
+func (sm *SortedMap) upperBoundRetCondition(i, j interface{}) bool {
+	return sm.lessFn(i, j)
+}
+
+func (sm *SortedMap) adjustIdxOrReturn(boundVal interface{}, incrCondition, retCondition func(boundVal, valFromIdx interface{}) bool) (int, bool) {
+	idx := sm.setBoundIdx(boundVal)
+	if idx < len(sm.sorted)-1 {
+		valFromIdx := sm.idx[sm.sorted[idx]]
+
+		if incrCondition(boundVal, valFromIdx) {
+			idx++
+		}
+
+		valFromIdx = sm.idx[sm.sorted[idx]]
+		if retCondition(boundVal, valFromIdx) {
+			return idx, false
+		}
+	}
+	return idx, true
+}
+
 func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 	smLen := len(sm.sorted)
+	if smLen == 0 {
+		return nil
+	}
 
 	if lowerBound != nil && upperBound != nil {
 		if sm.lessFn(upperBound, lowerBound) {
@@ -33,14 +69,10 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 
 	lowerBoundIdx := sm.setBoundIdx(lowerBound)
 	if lowerBound != nil {
-		if lowerBoundIdx < smLen-1 {
-			valFromIdx := sm.idx[sm.sorted[lowerBoundIdx]]
-
-			// If the bound value is greater than or equal to the value from the map,
-			// select the next index value.
-			if sm.lessFn(valFromIdx, lowerBound) {
-				lowerBoundIdx++
-			}
+		var ok bool
+		lowerBoundIdx, ok = sm.adjustIdxOrReturn(lowerBound, sm.lowerBoundIncrCondition, sm.lowerBoundRetCondition)
+		if !ok {
+			return nil
 		}
 	}
 
@@ -48,12 +80,10 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 	if upperBound == nil {
 		upperBoundIdx = smLen - 1
 	} else {
-		upperBoundIdx = sm.setBoundIdx(upperBound)
-		if upperBoundIdx < smLen-1 {
-			valFromIdx := sm.idx[sm.sorted[upperBoundIdx+1]]
-			if !sm.lessFn(valFromIdx, upperBound) && !sm.lessFn(upperBound, valFromIdx) {
-				upperBoundIdx++
-			}
+		var ok bool
+		upperBoundIdx, ok = sm.adjustIdxOrReturn(upperBound, sm.upperBoundIncrCondition, sm.upperBoundRetCondition)
+		if !ok {
+			return nil
 		}
 	}
 
@@ -72,6 +102,10 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 				return nil
 			}
 		}
+	}
+
+	if lowerBoundIdx > upperBoundIdx {
+		return nil
 	}
 
 	return []int{

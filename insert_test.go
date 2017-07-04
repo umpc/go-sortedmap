@@ -18,11 +18,15 @@ func TestInsert(t *testing.T) {
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
-
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
+		iterCh, err := sm.IterCh()
+		if err != nil {
 			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+	
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 
@@ -33,11 +37,15 @@ func TestInsert(t *testing.T) {
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
-
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
+		iterCh, err := sm.IterCh()
+		if err != nil {
 			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+	
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 }
@@ -54,11 +62,15 @@ func TestBatchInsert(t *testing.T) {
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
-
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
+		iterCh, err := sm.IterCh()
+		if err != nil {
 			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+	
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 }
