@@ -281,6 +281,39 @@ func TestCustomIterCh(t *testing.T) {
 	}()
 }
 
+func TestCancelCustomIterCh(t *testing.T) {
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	earlierDate := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
+	laterDate := time.Now()
+
+	func() {
+		params := IterChParams{
+			LowerBound: earlierDate,
+			UpperBound: laterDate,
+		}
+
+		ch, err := sm.CustomIterCh(params)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer ch.Close()
+
+		ch.Close()
+
+		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
+			if err.Error() != "Channel was nil." {
+				t.Fatal(err)
+			}
+		} else {
+			t.Fatal("Channel was not closed.")
+		}
+	}()
+}
+
 func TestIterFunc(t *testing.T) {
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
@@ -359,6 +392,17 @@ func TestBoundedIterFunc(t *testing.T) {
 		return false
 	}); err != nil {
 		t.Fatalf("TestBoundedIterFunc failed: %v", err)
+	}
+}
+
+func TestTestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
+	sm, _, err := newSortedMapFromRandRecords(1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := sm.BoundedKeys(time.Now().Add(-1*time.Microsecond), time.Now()); err == nil {
+		t.Fatal("Values fall between or are equal to the given bounds when it should not have returned bounds.")
 	}
 }
 

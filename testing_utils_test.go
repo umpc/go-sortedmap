@@ -53,26 +53,30 @@ func randRecords(n int) []Record {
 func verifyRecords(ch <-chan Record, reverse bool) error {
 	previousRec := Record{}
 
-	for rec := range ch {
-		if previousRec.Key != nil {
-			switch reverse {
-			case false:
-				if previousRec.Val.(time.Time).After(rec.Val.(time.Time)) {
-					return fmt.Errorf("%v %v",
-						unsortedErr,
-						fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
-					)
-				}
-			case true:
-				if previousRec.Val.(time.Time).Before(rec.Val.(time.Time)) {
-					return fmt.Errorf("%v %v",
-						unsortedErr,
-						fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
-					)
+	if ch != nil {
+		for rec := range ch {
+			if previousRec.Key != nil {
+				switch reverse {
+				case false:
+					if previousRec.Val.(time.Time).After(rec.Val.(time.Time)) {
+						return fmt.Errorf("%v %v",
+							unsortedErr,
+							fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
+						)
+					}
+				case true:
+					if previousRec.Val.(time.Time).Before(rec.Val.(time.Time)) {
+						return fmt.Errorf("%v %v",
+							unsortedErr,
+							fmt.Sprintf("prev: %+v, current: %+v.", previousRec, rec),
+						)
+					}
 				}
 			}
+			previousRec = rec
 		}
-		previousRec = rec
+	} else {
+		return fmt.Errorf("Channel was nil.")
 	}
 
 	return nil

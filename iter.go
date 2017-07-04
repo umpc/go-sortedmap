@@ -15,11 +15,18 @@ func (iterCh *IterChCloser) Close() error {
 	case iterCh.canceled <- struct{}{}:
 	default:
 	}
+
 	return nil
 }
 
 func (iterCh *IterChCloser) Records() <-chan Record {
-	return iterCh.ch
+	select {
+	case <-iterCh.canceled:
+		iterCh.canceled <- struct{}{}
+		return nil
+	default:
+		return iterCh.ch
+	}
 }
 
 // IterChParams contains configurable settings for CustomIterCh.
@@ -59,6 +66,12 @@ func (sm *SortedMap) recordFromIdx(i int) Record {
 }
 
 func (sm *SortedMap) sendRecord(iterCh IterChCloser, sendTimeout time.Duration, i int) bool {
+	select {
+	case <-iterCh.canceled:
+		iterCh.canceled <- struct{}{}
+		return false
+	default:
+	}
 
 	if sendTimeout <= time.Duration(0) {
 		iterCh.ch <- sm.recordFromIdx(i)
@@ -66,9 +79,6 @@ func (sm *SortedMap) sendRecord(iterCh IterChCloser, sendTimeout time.Duration, 
 	}
 
 	select {
-	case <-iterCh.canceled:
-		return false
-
 	case iterCh.ch <- sm.recordFromIdx(i):
 		return true
 
