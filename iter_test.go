@@ -401,7 +401,12 @@ func TestTestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := sm.BoundedKeys(time.Now().Add(-1*time.Microsecond), time.Now()); err == nil {
+	if err := sm.BoundedIterFunc(false, time.Now().Add(-1*time.Microsecond), time.Now(), func(rec Record) bool {
+		if rec.Key == nil {
+			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
+		}
+		return false
+	}); err == nil {
 		t.Fatal("Values fall between or are equal to the given bounds when it should not have returned bounds.")
 	}
 }
