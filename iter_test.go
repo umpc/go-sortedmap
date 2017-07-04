@@ -70,7 +70,7 @@ func TestReversedIterChTimeout(t *testing.T) {
 	sleepDur := 10 * time.Millisecond
 
 	params := IterChParams{
-		Reversed: true,
+		Reversed:    true,
 		SendTimeout: timeout,
 	}
 
