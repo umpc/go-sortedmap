@@ -85,67 +85,15 @@ func TestBoundedDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	func() {
-		iterCh, err := sm.IterCh()
-		if err != nil {
-
-		} else {
-			defer iterCh.Close()
-
-			if err := verifyRecords(iterCh.Records(), false); err != nil {
-				t.Fatal(err)
-			}
-		}
-	}()
-
 	if err := sm.BoundedDelete(earlierDate, time.Now()); err != nil {
 		t.Fatal(err)
 	}
-
-	func() {
-		iterCh, err := sm.IterCh()
-		if err != nil {
-
-		} else {
-			defer iterCh.Close()
-
-			if err := verifyRecords(iterCh.Records(), false); err != nil {
-				t.Fatal(err)
-			}
-		}
-	}()
 
 	if err := sm.BoundedDelete(time.Now(), earlierDate); err == nil {
 		t.Fatal(shouldFailErr)
 	}
 
-	func() {
-		iterCh, err := sm.IterCh()
-		if err != nil {
-
-		} else {
-			defer iterCh.Close()
-
-			if err := verifyRecords(iterCh.Records(), false); err != nil {
-				t.Fatal(err)
-			}
-		}
-	}()
-
 	if err := sm.BoundedDelete(earlierDate, earlierDate); err == nil {
 		t.Fatal(shouldFailErr)
 	}
-
-	func() {
-		iterCh, err := sm.IterCh()
-		if err != nil {
-
-		} else {
-			defer iterCh.Close()
-
-			if err := verifyRecords(iterCh.Records(), false); err != nil {
-				t.Fatal(err)
-			}
-		}
-	}()
 }

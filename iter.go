@@ -69,7 +69,7 @@ func (sm *SortedMap) sendRecord(iterCh IterChCloser, sendTimeout time.Duration, 
 
 		case iterCh.ch <- sm.recordFromIdx(i):
 			return true
-		}		
+		}
 	}
 
 	select {
