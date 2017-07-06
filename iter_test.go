@@ -338,6 +338,13 @@ func TestCancelCustomIterCh(t *testing.T) {
 		defer ch.Close()
 
 		go func(ch IterChCloser) {
+			i := 0
+			for range ch.Records() {
+				if i == 50 {
+					ch.Close()
+				}
+				i++
+			}
 			if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
 				if err.Error() != "Channel was nil." {
 					t.Fatal(err)
