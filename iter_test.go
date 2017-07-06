@@ -206,29 +206,33 @@ func TestBounds(t *testing.T) {
 
 	reversed := false
 
-	iterCh, err := sm.BoundedIterCh(reversed, time.Time{}, unixtime)
-	if err != nil {
-		t.Fatal(err)
-	} else {
-		defer iterCh.Close()
-
-		if err := verifyRecords(iterCh.Records(), reversed); err != nil {
+	func() {
+		iterCh, err := sm.BoundedIterCh(reversed, time.Time{}, unixtime)
+		if err != nil {
 			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+
+			if err := verifyRecords(iterCh.Records(), reversed); err != nil {
+				t.Fatal(err)
+			}
 		}
-	}
+	}()
 
-	iterCh, err = sm.BoundedIterCh(reversed, obsd, github)
-	if err != nil {
-		t.Fatal(err)
-	} else {
-		defer iterCh.Close()
-
-		if err := verifyRecords(iterCh.Records(), reversed); err != nil {
+	func() {
+		iterCh, err := sm.BoundedIterCh(reversed, obsd, github)
+		if err != nil {
 			t.Fatal(err)
-		}
-	}
+		} else {
+			defer iterCh.Close()
 
-	_, err = sm.BoundedIterCh(reversed, obsd, obsd)
+			if err := verifyRecords(iterCh.Records(), reversed); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}()
+
+	_, err := sm.BoundedIterCh(reversed, obsd, obsd)
 	if err == nil {
 		t.Fatal("equal bounds values were accepted error")
 	}
@@ -316,7 +320,7 @@ func TestCustomIterCh(t *testing.T) {
 	}()
 }
 
-func TestCancelCustomIterCh(t *testing.T) {
+func TestCloseCustomIterCh(t *testing.T) {
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		t.Fatal(err)
@@ -325,36 +329,25 @@ func TestCancelCustomIterCh(t *testing.T) {
 	earlierDate := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 	laterDate := time.Now()
 
-	func() {
-		params := IterChParams{
-			LowerBound: earlierDate,
-			UpperBound: laterDate,
-		}
+	ch, err := sm.IterCh()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		ch, err := sm.CustomIterCh(params)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer ch.Close()
+	ch.Close()
 
-		go func(ch IterChCloser) {
-			i := 0
-			for range ch.Records() {
-				if i == 50 {
-					ch.Close()
-				}
-				i++
-			}
-			if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
-				if err.Error() != "Channel was nil." {
-					t.Fatal(err)
-				}
-			} else {
-				t.Fatal("Channel was not closed.")
-			}
-		}(ch)
-		ch.Close()
-	}()
+	params := IterChParams{
+		SendTimeout: 5 * time.Minute,
+		LowerBound: earlierDate,
+		UpperBound: laterDate,
+	}
+
+	ch, err = sm.CustomIterCh(params)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ch.Close()
 }
 
 func TestIterFunc(t *testing.T) {
