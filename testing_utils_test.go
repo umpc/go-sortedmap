@@ -90,10 +90,10 @@ func newSortedMapFromRandRecords(n int) (*SortedMap, []Record, error) {
 	iterCh, err := sm.IterCh()
 	if err != nil {
 		return sm, records, err
-	} else {
-		defer iterCh.Close()
-		return sm, records, verifyRecords(iterCh.Records(), false)
 	}
+	defer iterCh.Close()
+
+	return sm, records, verifyRecords(iterCh.Records(), false)
 }
 
 func newRandSortedMapWithKeys(n int) (*SortedMap, []Record, []interface{}, error) {

@@ -194,15 +194,15 @@ func TestBoundedIterCh(t *testing.T) {
 func TestBounds(t *testing.T) {
 	sm := New(4, asc.Time)
 
-	obsd     := time.Date(1995, 10, 18,  8, 37, 1, 0, time.UTC)
-	unixtime := time.Date(1970,  1,  1,  0,  0, 0, 0, time.UTC)
-	linux    := time.Date(1991,  8, 25, 20, 57, 8, 0, time.UTC)
-	github   := time.Date(2008,  4, 10,  0,  0, 0, 0, time.UTC)
+	obsd := time.Date(1995, 10, 18, 8, 37, 1, 0, time.UTC)
+	unixtime := time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
+	linux := time.Date(1991, 8, 25, 20, 57, 8, 0, time.UTC)
+	github := time.Date(2008, 4, 10, 0, 0, 0, 0, time.UTC)
 
-	sm.Insert("OpenBSD",  obsd)
+	sm.Insert("OpenBSD", obsd)
 	sm.Insert("UnixTime", unixtime)
-	sm.Insert("Linux",    linux)
-	sm.Insert("GitHub",   github)
+	sm.Insert("Linux", linux)
+	sm.Insert("GitHub", github)
 
 	reversed := false
 
@@ -338,8 +338,8 @@ func TestCloseCustomIterCh(t *testing.T) {
 
 	params := IterChParams{
 		SendTimeout: 5 * time.Minute,
-		LowerBound: earlierDate,
-		UpperBound: laterDate,
+		LowerBound:  earlierDate,
+		UpperBound:  laterDate,
 	}
 
 	ch, err = sm.CustomIterCh(params)
