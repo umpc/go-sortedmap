@@ -353,7 +353,6 @@ func TestCancelCustomIterCh(t *testing.T) {
 				t.Fatal("Channel was not closed.")
 			}
 		}(ch)
-		ch.Close()
 	}()
 }
 

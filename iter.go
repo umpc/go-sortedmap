@@ -3,22 +3,23 @@ package sortedmap
 import (
 	"errors"
 	"time"
+	"sync"
 )
 
 // IterChCloser allows records to be read through a channel that is returned by the Records method.
 // IterChCloser values should be closed after use using the Close method.
 type IterChCloser struct {
+	sync.RWMutex
 	ch       chan Record
-	canceled chan struct{}
+	canceled bool
 }
 
 // Close cancels a channel-based iteration and causes the sending goroutine to exit.
 // Close should be used after an IterChCloser is finished being read from.
 func (iterCh *IterChCloser) Close() error {
-	select {
-	case iterCh.canceled <- struct{}{}:
-	default:
-	}
+	iterCh.Lock()
+	iterCh.canceled = true
+	iterCh.Unlock()
 
 	return nil
 }
@@ -26,13 +27,15 @@ func (iterCh *IterChCloser) Close() error {
 // Records returns nil if the IterChCloser has been closed.
 // Otherwise, Record returns a channel that records can be read from.
 func (iterCh *IterChCloser) Records() <-chan Record {
-	select {
-	case <-iterCh.canceled:
-		iterCh.canceled <- struct{}{}
+	iterCh.RLock()
+	canceled := iterCh.canceled
+	iterCh.RUnlock()
+
+	if canceled {
 		return nil
-	default:
-		return iterCh.ch
 	}
+
+	return iterCh.ch
 }
 
 // IterChParams contains configurable settings for CustomIterCh.
@@ -72,11 +75,12 @@ func (sm *SortedMap) recordFromIdx(i int) Record {
 }
 
 func (sm *SortedMap) sendRecord(iterCh IterChCloser, sendTimeout time.Duration, i int) bool {
-	select {
-	case <-iterCh.canceled:
-		iterCh.canceled <- struct{}{}
+	iterCh.RLock()
+	canceled := iterCh.canceled
+	iterCh.RUnlock()
+
+	if canceled {
 		return false
-	default:
 	}
 
 	if sendTimeout <= time.Duration(0) {
@@ -101,8 +105,7 @@ func (sm *SortedMap) iterCh(params IterChParams) (IterChCloser, error) {
 	}
 
 	iterCh := IterChCloser{
-		ch:       make(chan Record, setBufSize(params.BufSize)),
-		canceled: make(chan struct{}, 1),
+		ch: make(chan Record, setBufSize(params.BufSize)),
 	}
 
 	go func(params IterChParams, iterCh IterChCloser) {
