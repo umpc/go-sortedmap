@@ -23,9 +23,9 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestUnsortedLessFunc(t *testing.T) {
+func TestNoOpFuncs(t *testing.T) {
 	if New(0, nil).lessFn(nil, nil) {
-		t.Fatal("TestUnsortedLessFunc failed: lessFn returned true!")
+		t.Fatal("TestNoOpFuncs failed: lessFn returned true!")
 	}
 }
 

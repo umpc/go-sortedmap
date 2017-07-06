@@ -147,7 +147,7 @@ func main() {
 
 ### BoundedIterCh
 
-```BoundedIterCh``` selects the records equal to or between the given bounds. Its first argument allows for reversing the order of the returned records.
+```BoundedIterCh``` selects values that are greater than the lower bound and are less than or equal to the upper bound. Its first argument allows for reversing the order of the returned records.
 
 ```go
 package main
@@ -373,7 +373,7 @@ func main() {
 
 ### BoundedDelete
 
-```BoundedDelete``` is a similar pattern as the above ```Bounded``` methods. ```BoundedDelete``` removes values that are equal to or between the provided bounds values.
+```BoundedDelete``` is a similar pattern as the above ```Bounded``` methods. ```BoundedDelete``` removes values that are greater than the lower bound and lower than or equal to the upper bound.
 
 ```go
 package main
