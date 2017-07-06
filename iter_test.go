@@ -329,19 +329,25 @@ func TestCloseCustomIterCh(t *testing.T) {
 	earlierDate := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
 	laterDate := time.Now()
 
-	func() {
-		params := IterChParams{
-			LowerBound: earlierDate,
-			UpperBound: laterDate,
-		}
+	ch, err := sm.IterCh()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		ch, err := sm.CustomIterCh(params)
-		if err != nil {
-			t.Fatal(err)
-		}
+	ch.Close()
 
-		ch.Close()
-	}()
+	params := IterChParams{
+		SendTimeout: 5 * time.Minute,
+		LowerBound: earlierDate,
+		UpperBound: laterDate,
+	}
+
+	ch, err = sm.CustomIterCh(params)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ch.Close()
 }
 
 func TestIterFunc(t *testing.T) {
