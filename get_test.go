@@ -14,11 +14,15 @@ func TestGet(t *testing.T) {
 		}
 	}
 
-	iterCh := sm.IterCh()
-	defer iterCh.Close()
-
-	if err := verifyRecords(iterCh.Records(), false); err != nil {
+	iterCh, err := sm.IterCh()
+	if err != nil {
 		t.Fatal(err)
+	} else {
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
@@ -35,10 +39,14 @@ func TestBatchGet(t *testing.T) {
 		}
 	}
 
-	iterCh := sm.IterCh()
-	defer iterCh.Close()
-
-	if err := verifyRecords(iterCh.Records(), false); err != nil {
+	iterCh, err := sm.IterCh()
+	if err != nil {
 		t.Fatal(err)
+	} else {
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
 	}
 }

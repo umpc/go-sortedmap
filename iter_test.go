@@ -3,6 +3,8 @@ package sortedmap
 import (
 	"testing"
 	"time"
+
+	"github.com/umpc/go-sortedmap/asc"
 )
 
 const (
@@ -189,6 +191,49 @@ func TestBoundedIterCh(t *testing.T) {
 	}
 }
 
+func TestBounds(t *testing.T) {
+	sm := New(4, asc.Time)
+
+	obsd     := time.Date(1995, 10, 18,  8, 37, 1, 0, time.UTC)
+	unixtime := time.Date(1970,  1,  1,  0,  0, 0, 0, time.UTC)
+	linux    := time.Date(1991,  8, 25, 20, 57, 8, 0, time.UTC)
+	github   := time.Date(2008,  4, 10,  0,  0, 0, 0, time.UTC)
+
+	sm.Insert("OpenBSD",  obsd)
+	sm.Insert("UnixTime", unixtime)
+	sm.Insert("Linux",    linux)
+	sm.Insert("GitHub",   github)
+
+	reversed := false
+
+	iterCh, err := sm.BoundedIterCh(reversed, time.Time{}, unixtime)
+	if err != nil {
+		t.Fatal(err)
+	} else {
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), reversed); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	iterCh, err = sm.BoundedIterCh(reversed, obsd, github)
+	if err != nil {
+		t.Fatal(err)
+	} else {
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), reversed); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	_, err = sm.BoundedIterCh(reversed, obsd, obsd)
+	if err == nil {
+		t.Fatal("equal bounds values were accepted error")
+	}
+}
+
 func TestCustomIterCh(t *testing.T) {
 	const (
 		nilBoundValsErr  = "accepted two nil bound values"
@@ -249,13 +294,8 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	func() {
-		ch, err := sm.CustomIterCh(params)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer ch.Close()
-
-		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
+		_, err := sm.CustomIterCh(params)
+		if err == nil {
 			t.Fatal(err)
 		}
 	}()
@@ -269,13 +309,8 @@ func TestCustomIterCh(t *testing.T) {
 	}
 
 	func() {
-		ch, err := sm.CustomIterCh(params)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer ch.Close()
-
-		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
+		_, err := sm.CustomIterCh(params)
+		if err == nil {
 			t.Fatal(err)
 		}
 	}()
@@ -302,15 +337,23 @@ func TestCancelCustomIterCh(t *testing.T) {
 		}
 		defer ch.Close()
 
-		ch.Close()
-
-		if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
-			if err.Error() != "Channel was nil." {
-				t.Fatal(err)
+		go func(ch IterChCloser) {
+			i := 0
+			for range ch.Records() {
+				if i == 50 {
+					ch.Close()
+				}
+				i++
 			}
-		} else {
-			t.Fatal("Channel was not closed.")
-		}
+			if err := verifyRecords(ch.Records(), params.Reversed); err != nil {
+				if err.Error() != "Channel was nil." {
+					t.Fatal(err)
+				}
+			} else {
+				t.Fatal("Channel was not closed.")
+			}
+		}(ch)
+		ch.Close()
 	}()
 }
 
@@ -395,15 +438,14 @@ func TestBoundedIterFunc(t *testing.T) {
 	}
 }
 
-func TestTestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
+func TestBoundedIterFuncWithNoBoundsReturned(t *testing.T) {
 	sm, _, err := newSortedMapFromRandRecords(1000)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if err := sm.BoundedIterFunc(false, time.Now().Add(-1*time.Microsecond), time.Now(), func(rec Record) bool {
+	if err := sm.BoundedIterFunc(false, time.Date(5783, 1, 1, 0, 0, 0, 0, time.UTC), time.Now(), func(rec Record) bool {
 		if rec.Key == nil {
-			t.Fatalf("TestBoundedIterFunc failed: %v", nilValErr)
+			t.Fatal(nilValErr)
 		}
 		return false
 	}); err == nil {

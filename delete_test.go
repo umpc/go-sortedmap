@@ -6,6 +6,8 @@ import (
 )
 
 func TestDelete(t *testing.T) {
+	const shouldFailErr = "Equal bound values that do not match a stored value should always fail."
+
 	sm, records, err := newSortedMapFromRandRecords(300)
 	if err != nil {
 		t.Fatal(err)
@@ -19,14 +21,9 @@ func TestDelete(t *testing.T) {
 		sm.Delete(rec.Key)
 	}
 
-	iterCh := sm.IterCh()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer iterCh.Close()
-
-	if err := verifyRecords(iterCh.Records(), false); err != nil {
-		t.Fatal(err)
+	_, err = sm.IterCh()
+	if err == nil {
+		t.Fatal(shouldFailErr)
 	}
 }
 
@@ -50,11 +47,15 @@ func TestBatchDelete(t *testing.T) {
 		}
 	}
 
-	iterCh := sm.IterCh()
-	defer iterCh.Close()
-
-	if err := verifyRecords(iterCh.Records(), false); err != nil {
+	iterCh, err := sm.IterCh()
+	if err != nil {
 		t.Fatal(err)
+	} else {
+		defer iterCh.Close()
+
+		if err := verifyRecords(iterCh.Records(), false); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
@@ -62,6 +63,7 @@ func TestBoundedDelete(t *testing.T) {
 	const (
 		nilBoundValsErr  = "accepted nil bound value"
 		generalBoundsErr = "general bounds error"
+		shouldFailErr    = "Equal bound values that do not match a stored value should always fail."
 	)
 
 	sm, _, err := newSortedMapFromRandRecords(300)
@@ -84,11 +86,15 @@ func TestBoundedDelete(t *testing.T) {
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
+		iterCh, err := sm.IterCh()
+		if err != nil {
 
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
-			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 
@@ -97,37 +103,49 @@ func TestBoundedDelete(t *testing.T) {
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
+		iterCh, err := sm.IterCh()
+		if err != nil {
 
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
-			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 
-	if err := sm.BoundedDelete(time.Now(), earlierDate); err != nil {
-		t.Fatal(err)
+	if err := sm.BoundedDelete(time.Now(), earlierDate); err == nil {
+		t.Fatal(shouldFailErr)
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
+		iterCh, err := sm.IterCh()
+		if err != nil {
 
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
-			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 
 	if err := sm.BoundedDelete(earlierDate, earlierDate); err == nil {
-		t.Fatal(err)
+		t.Fatal(shouldFailErr)
 	}
 
 	func() {
-		iterCh := sm.IterCh()
-		defer iterCh.Close()
+		iterCh, err := sm.IterCh()
+		if err != nil {
 
-		if err := verifyRecords(iterCh.Records(), false); err != nil {
-			t.Fatal(err)
+		} else {
+			defer iterCh.Close()
+
+			if err := verifyRecords(iterCh.Records(), false); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}()
 }

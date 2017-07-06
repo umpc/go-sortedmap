@@ -53,11 +53,12 @@ func main() {
   iterCh, err := sm.BoundedIterCh(reversed, lowerBound, upperBound)
   if err != nil {
     fmt.Println(err)
-  }
-  defer iterCh.Close()
+  } else {
+    defer iterCh.Close()
 
-  for rec := range iterCh.Records() {
-    fmt.Printf("%+v\n", rec)
+    for rec := range iterCh.Records() {
+      fmt.Printf("%+v\n", rec)
+    }
   }
 }
 ```
