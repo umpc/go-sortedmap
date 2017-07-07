@@ -104,7 +104,7 @@ func main() {
 
 ## Iteration
 
-SortedMap supports three specific ways of processing iterable data: 
+SortedMap supports three specific ways of processing list data: 
 
 * Channels
 * Callback Functions
@@ -136,11 +136,15 @@ func main() {
   // BatchInsert the example records:
   sm.BatchInsert(records)
 
-  iterCh := sm.IterCh()
-  defer iterCh.Close()
+  iterCh, err := sm.IterCh()
+  if err != nil {
+    fmt.Println(err)
+  } else {
+    defer iterCh.Close()
 
-  for rec := range iterCh.Records() {
-    fmt.Printf("%+v\n", rec)
+    for rec := range iterCh.Records() {
+      fmt.Printf("%+v\n", rec)
+    }
   }
 }
 ```
@@ -397,7 +401,7 @@ func main() {
   // BatchInsert the example records:
   sm.BatchInsert(records)
 
-  // Delete values equal to or within the given bound values.
+  // Delete values after the lower bound value and before or equal to the upper bound value.
   if err := sm.BoundedDelete(time.Time{}, time.Now()); err != nil {
     fmt.Println(err)
   }
