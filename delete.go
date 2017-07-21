@@ -35,9 +35,10 @@ func (sm *SortedMap) boundedDelete(lowerBound, upperBound interface{}) error {
 	if iterBounds == nil {
 		return errors.New(noValuesErr)
 	}
-	for i := iterBounds[0]; i <= iterBounds[1]-i; i++ {
+	for i, deleted := iterBounds[0], 0; i <= iterBounds[1]-deleted; i++ {
 		delete(sm.idx, sm.sorted[i])
 		sm.sorted = deleteInterface(sm.sorted, i)
+		deleted++
 	}
 	return nil
 }
