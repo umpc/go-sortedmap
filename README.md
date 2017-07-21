@@ -48,7 +48,7 @@ func main() {
   lowerBound := time.Date(1994, 1, 1, 0, 0, 0, 0, time.UTC)
   upperBound := time.Now()
 
-  // Select values >= lowerBound and values <= upperBound.
+  // Select values > lowerBound and values <= upperBound.
   // Loop through the values, in reverse order:
   iterCh, err := sm.BoundedIterCh(reversed, lowerBound, upperBound)
   if err != nil {
