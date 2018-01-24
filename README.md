@@ -11,14 +11,10 @@ go get -u github.com/umpc/go-sortedmap
 ```
 
 ### Complexity
-Operation | Average-Case
-----------|-----------
-Has | ```O(1)```
-Get | ```O(1)```
-Iter | ```O(n)```
-Delete | ```O(n log n)```
-Insert | ```O(n^2)```
-Replace | ```O(2^n)```
+Operation               | Worst-Case
+------------------------|-----------
+Has, Get                | ```O(1)```
+Delete, Insert, Replace | ```O(n)```
 
 ## Example Usage
 
