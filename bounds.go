@@ -3,9 +3,6 @@ package sortedmap
 import "sort"
 
 func (sm *SortedMap) setBoundIdx(boundVal interface{}) int {
-	if boundVal == nil {
-		return 0
-	}
 	return sort.Search(len(sm.sorted), func(i int) bool {
 		return sm.lessFn(boundVal, sm.idx[sm.sorted[i]])
 	})
@@ -23,23 +20,25 @@ func (sm *SortedMap) boundsIdxSearch(lowerBound, upperBound interface{}) []int {
 		}
 	}
 
-	lowerBoundIdx := sm.setBoundIdx(lowerBound)
-	if lowerBoundIdx == smLen {
-		lowerBoundIdx--
-	}
-	if lowerBoundIdx > 0 && sm.lessFn(sm.idx[sm.sorted[lowerBoundIdx]], lowerBound) {
-		lowerBoundIdx++
+	lowerBoundIdx := 0
+	if lowerBound != nil {
+		lowerBoundIdx = sm.setBoundIdx(lowerBound)
+
+		if lowerBoundIdx == smLen {
+			lowerBoundIdx--
+		}
+		if lowerBoundIdx >= 0 && sm.lessFn(sm.idx[sm.sorted[lowerBoundIdx]], lowerBound) {
+			lowerBoundIdx++
+		}
 	}
 
-	upperBoundIdx := 0
-	if upperBound == nil {
-		upperBoundIdx = smLen - 1
-	} else {
+	upperBoundIdx := smLen - 1
+	if upperBound != nil {
 		upperBoundIdx = sm.setBoundIdx(upperBound)
 		if upperBoundIdx == smLen {
 			upperBoundIdx--
 		}
-		if upperBoundIdx > 0 && sm.lessFn(upperBound, sm.idx[sm.sorted[upperBoundIdx]]) {
+		if upperBoundIdx >= 0 && sm.lessFn(upperBound, sm.idx[sm.sorted[upperBoundIdx]]) {
 			upperBoundIdx--
 		}
 	}

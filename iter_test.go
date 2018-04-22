@@ -200,11 +200,37 @@ func TestBounds(t *testing.T) {
 	github := time.Date(2008, 4, 10, 0, 0, 0, 0, time.UTC)
 
 	sm.Insert("OpenBSD", obsd)
+	reversed := false
+
+	// Test bounds combinations which should not match against the value currently in the map
+	for _, bounds := range [][]interface{}{
+		{unixtime, linux}, {nil, unixtime}, {github, nil},
+	} {
+		_, err := sm.BoundedIterCh(reversed, bounds[0], bounds[1])
+		if err == nil || err.Error() != noValuesErr {
+			t.Fatalf("expected no values match error using bounds (lower: %v, upper: %v)", bounds[0], bounds[1])
+		}
+	}
+
+	// Test bounds combinations which should match against the value currently in the map
+	for _, bounds := range [][]interface{}{
+		{unixtime, github}, {unixtime, nil}, {nil, github},
+	} {
+		iterCh, err := sm.BoundedIterCh(reversed, bounds[0], bounds[1])
+		if err != nil {
+			t.Fatal(err)
+		}
+		for rec := range iterCh.Records() {
+			if rec.Val.(time.Time) != obsd {
+				t.Fatal("unexpected value returned by bounded iterator")
+			}
+		}
+		iterCh.Close()
+	}
+
 	sm.Insert("UnixTime", unixtime)
 	sm.Insert("Linux", linux)
 	sm.Insert("GitHub", github)
-
-	reversed := false
 
 	func() {
 		iterCh, err := sm.BoundedIterCh(reversed, time.Time{}, unixtime)
